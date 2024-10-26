@@ -36,6 +36,24 @@ class ProfileModel {
       'fullName': fullName,
     };
   }
+
+  ProfileModel copyWith({
+    String? id,
+    PersonalInformation? personalInformation,
+    String? email,
+    String? profileType,
+    String? biography,
+    String? fullName,
+  }) {
+    return ProfileModel(
+      id: id ?? this.id,
+      personalInformation: personalInformation ?? this.personalInformation,
+      email: email ?? this.email,
+      profileType: profileType ?? this.profileType,
+      biography: biography ?? this.biography,
+      fullName: fullName ?? this.fullName,
+    );
+  }
 }
 
 class PersonalInformation {
@@ -67,6 +85,20 @@ class PersonalInformation {
       'personName': personName.toJson(),
       'dateOfBirth': dateOfBirth.toIso8601String(),
     };
+  }
+
+  PersonalInformation copyWith({
+    Address? address,
+    String? phoneNumber,
+    PersonName? personName,
+    DateTime? dateOfBirth,
+  }) {
+    return PersonalInformation(
+      address: address ?? this.address,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      personName: personName ?? this.personName,
+      dateOfBirth: dateOfBirth ?? this.dateOfBirth,
+    );
   }
 }
 
@@ -104,6 +136,22 @@ class Address {
       'fullAddress': fullAddress,
     };
   }
+
+  Address copyWith({
+    String? city,
+    String? state,
+    String? country,
+    String? zipCode,
+    String? fullAddress,
+  }) {
+    return Address(
+      city: city ?? this.city,
+      state: state ?? this.state,
+      country: country ?? this.country,
+      zipCode: zipCode ?? this.zipCode,
+      fullAddress: fullAddress ?? this.fullAddress,
+    );
+  }
 }
 
 class PersonName {
@@ -131,5 +179,18 @@ class PersonName {
       'lastName': lastName,
       'fullName': fullName,
     };
+  }
+
+  PersonName copyWith(
+    {
+    String? firstName,
+    String? lastName,
+    String? fullName,
+  }) {
+    return PersonName(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      fullName: fullName ?? this.fullName,
+    );
   }
 }

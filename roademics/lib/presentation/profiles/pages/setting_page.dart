@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:roademics/presentation/profiles/pages/email_addresses_page.dart';
 import 'package:roademics/presentation/profiles/widgets/nav_bar.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -15,20 +16,42 @@ class SettingsPage extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         children: [
           const ListTile(
-            title: Text("En General"),
+            title: Text("Preferencias de Usuario"),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  title: Text("Información Personal"),
+                  title: Text("Idioma"),
                   onTap: null, // Agrega página aquí
                 ),
                 ListTile(
-                  title: Text("Apariencia"),
+                  title: Text("Modo Oscuro"),
                   onTap: null, // Agrega página aquí
                 ),
+              ],
+            ),
+          ),
+          const Divider(),
+          ListTile(
+            title: const Text("Acceso a la Cuenta"),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
                 ListTile(
-                  title: Text("Preferencias"),
+                  title: const Text("Direcciones de Correo Electrónico"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const EmailAddressesPage()),
+                    );
+                  },
+                ),
+                const ListTile(
+                  title: Text("Números de Teléfono"),
+                  onTap: null, // Agrega página aquí
+                ),
+                const ListTile(
+                  title: Text("Cambio de Contraseña"),
                   onTap: null, // Agrega página aquí
                 ),
               ],
@@ -45,10 +68,6 @@ class SettingsPage extends StatelessWidget {
                   onTap: null, // Agrega página aquí
                 ),
                 ListTile(
-                  title: Text("Preferencias de Visibilidad"),
-                  onTap: null, // Agrega página aquí
-                ),
-                ListTile(
                   title: Text("Contactos"),
                   onTap: null, // Agrega página aquí
                 ),
@@ -61,24 +80,20 @@ class SettingsPage extends StatelessWidget {
           ),
           const Divider(),
           const ListTile(
-            title: Text("Privacidad de Cuenta"),
+            title: Text("Visibilidad"),
             subtitle: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  title: Text("Gestión de Datos"),
+                  title: Text("Visualización del Perfil"),
                   onTap: null, // Agrega página aquí
                 ),
                 ListTile(
-                  title: Text("Preferencias de Visibilidad"),
+                  title: Text("Gestionar Estado"),
                   onTap: null, // Agrega página aquí
                 ),
                 ListTile(
-                  title: Text("Contactos"),
-                  onTap: null, // Agrega página aquí
-                ),
-                ListTile(
-                  title: Text("Términos de Privacidad"),
+                  title: Text("Bloqueos"),
                   onTap: null, // Agrega página aquí
                 ),
               ],
@@ -91,7 +106,7 @@ class SettingsPage extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 ListTile(
-                  title: Text("Medios de Recuperación"),
+                  title: Text("Llaves de Acceso"),
                   onTap: null, // Agrega página aquí
                 ),
                 ListTile(

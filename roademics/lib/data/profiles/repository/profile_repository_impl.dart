@@ -1,5 +1,5 @@
 import 'package:roademics/domain/profiles/entities/profile_model.dart';
-import 'package:roademics/data/profiles/repository/profile_repository.dart';
+import 'package:roademics/domain/profiles/repositories/profile_repository.dart';
 import 'package:roademics/data/profiles/remote/profile_service.dart';
 
 class ProfileRepositoryImpl implements ProfileRepository {

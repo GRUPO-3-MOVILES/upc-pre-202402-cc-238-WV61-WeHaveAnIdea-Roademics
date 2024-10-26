@@ -1,5 +1,5 @@
 import 'package:bloc/bloc.dart';
-import 'package:roademics/data/profiles/repository/profile_repository.dart';
+import 'package:roademics/domain/profiles/repositories/profile_repository.dart';
 import 'profile_event.dart';
 import 'profile_state.dart';
 

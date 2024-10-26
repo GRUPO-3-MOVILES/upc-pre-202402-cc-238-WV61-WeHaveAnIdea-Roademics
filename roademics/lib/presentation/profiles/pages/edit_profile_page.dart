@@ -9,10 +9,10 @@ class EditProfilePage extends StatefulWidget {
   const EditProfilePage({super.key});
 
   @override
-  _EditProfilePageState createState() => _EditProfilePageState();
+  EditProfilePageState createState() => EditProfilePageState();
 }
 
-class _EditProfilePageState extends State<EditProfilePage> {
+class EditProfilePageState extends State<EditProfilePage> {
   // Controladores para los campos de texto
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _cityController = TextEditingController();
