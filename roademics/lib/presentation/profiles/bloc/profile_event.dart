@@ -28,3 +28,9 @@ class UpdatePassword extends ProfileEvent {
     required this.newPassword,
   });
 }
+
+class DeleteAccount extends ProfileEvent {
+  final String password;
+
+  DeleteAccount(this.password);
+}

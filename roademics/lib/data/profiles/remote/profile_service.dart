@@ -49,4 +49,21 @@ class ProfileService {
     }
     return false;
   }
+
+  Future<bool> deleteAccount(String password) async {
+    final url = Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}/delete-account');
+    final response = await http.post(
+      url,
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode({
+        'password': password,
+      }),
+    );
+    if (response.statusCode == HttpStatus.ok) {
+      return true;
+    }
+    return false;
+  }
 }

@@ -19,3 +19,5 @@ class ProfileSuccess extends ProfileState {
 
   ProfileSuccess({required this.message});
 }
+
+class AccountDeleted extends ProfileState {}

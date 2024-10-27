@@ -11,7 +11,8 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<UpdateProfile>(_onUpdateProfile);
     on<UpdatePhoneNumber>(_onUpdatePhoneNumber);
     on<UpdateEmailAddress>(_onUpdateEmailAddress);
-    on<UpdatePassword>(_onUpdatePassword); // Asegúrate de agregar esto
+    on<UpdatePassword>(_onUpdatePassword);
+    on<DeleteAccount>(_onDeleteAccount);
   }
 
   void _onLoadProfile(LoadProfile event, Emitter<ProfileState> emit) async {
@@ -64,7 +65,21 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
       if (result) {
         emit(ProfileSuccess(message: 'Contraseña actualizada correctamente'));
       } else {
-        emit(ProfileError(error: 'Error al actualizar la contraseña'));
+        emit(ProfileError(error: 'Error al actualizar la contraseña. Revise si las contraseñas ingresadas son adecuadas.'));
+      }
+    } catch (e) {
+      emit(ProfileError(error: e.toString()));
+    }
+  }
+
+  void _onDeleteAccount(DeleteAccount event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoading());
+    try {
+      final result = await profileRepository.deleteAccount(event.password);
+      if (result) {
+        emit(AccountDeleted());
+      } else {
+        emit(ProfileError(error: 'Error al eliminar la cuenta. Contraseña incorrecta.'));
       }
     } catch (e) {
       emit(ProfileError(error: e.toString()));

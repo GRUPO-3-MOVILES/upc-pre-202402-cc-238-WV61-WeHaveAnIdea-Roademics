@@ -6,4 +6,5 @@ abstract class ProfileRepository {
   Future<ProfileModel> updatePhoneNumber(String phoneNumber);
   Future<ProfileModel> updateEmailAddress(String email);
   Future<bool> updatePassword(String currentPassword, String newPassword);
+  Future<bool> deleteAccount(String password);
 }

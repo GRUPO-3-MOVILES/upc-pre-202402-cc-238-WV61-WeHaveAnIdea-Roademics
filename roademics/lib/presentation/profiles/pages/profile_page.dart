@@ -14,7 +14,7 @@ class ProfilePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => ProfileBloc(profileRepository: ProfileRepositoryImpl(ProfileService())), // Usa el repositorio
+      create: (context) => ProfileBloc(profileRepository: ProfileRepositoryImpl(ProfileService())), 
       child: Scaffold(
         appBar: AppBar(
           title: const Text("Profile"),
@@ -25,7 +25,7 @@ class ProfilePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const SettingsPage()), // Navega a SettingsPage
+                  MaterialPageRoute(builder: (context) => const SettingsPage()), 
                 );
               },
             ),
@@ -133,7 +133,7 @@ class ProfilePage extends StatelessWidget {
             return const Center(child: Text("No se encontraron datos"));
           },
         ),
-        bottomNavigationBar: const NavBar(), // Añade el NavBar
+        bottomNavigationBar: const NavBar(), 
       ),
     );
   }

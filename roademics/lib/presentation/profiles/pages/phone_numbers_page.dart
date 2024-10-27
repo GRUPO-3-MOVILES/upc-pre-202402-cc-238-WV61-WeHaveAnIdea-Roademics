@@ -18,8 +18,8 @@ class PhoneNumbersPageState extends State<PhoneNumbersPage> {
   String phoneNumber = "";
   bool isEditing = false;
   final TextEditingController _phoneNumberController = TextEditingController();
-  String initialCountry = 'PE'; // País inicial
-  PhoneNumber number = PhoneNumber(isoCode: 'PE'); // Configuración inicial
+  String initialCountry = 'PE'; 
+  PhoneNumber number = PhoneNumber(isoCode: 'PE'); 
 
   @override
   void initState() {

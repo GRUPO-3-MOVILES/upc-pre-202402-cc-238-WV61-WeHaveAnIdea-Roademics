@@ -41,4 +41,9 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<bool> updatePassword(String currentPassword, String newPassword) async {
     return await _service.updatePassword(currentPassword, newPassword);
   }
+
+  @override
+  Future<bool> deleteAccount(String password) async {
+    return await _service.deleteAccount(password);
+  }
 }
