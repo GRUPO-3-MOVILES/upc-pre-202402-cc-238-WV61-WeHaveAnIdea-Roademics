@@ -12,4 +12,14 @@ class Edge {
     required this.description,
     required this.relationshipType,
   });
+
+  factory Edge.fromJson(Map<String, dynamic> json) {
+    return Edge(
+      fromNodeId: json['fromNodeId'],
+      toNodeId: json['toNodeId'],
+      label: json['label'],
+      description: json['description'],
+      relationshipType: json['relationshipType'],
+    );
+  }
 }

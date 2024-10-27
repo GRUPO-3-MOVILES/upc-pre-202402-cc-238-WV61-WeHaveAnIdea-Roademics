@@ -12,4 +12,14 @@ class Node {
     required this.isStartNode,
     required this.isEndNode,
   });
+
+  factory Node.fromJson(Map<String, dynamic> json) {
+    return Node(
+      nodeId: json['nodeId'],
+      title: json['title'],
+      description: json['description'],
+      isStartNode: json['isStartNode'],
+      isEndNode: json['isEndNode'],
+    );
+  }
 }
