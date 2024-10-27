@@ -15,8 +15,8 @@ class NodeWidget extends StatelessWidget {
         trailing: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(node.isStartNode ? 'Start' : ''),
-            Text(node.isEndNode ? 'End' : ''),
+            if (node.isStartNode) Text('Start'),
+            if (node.isEndNode) Text('End'),
           ],
         ),
       ),

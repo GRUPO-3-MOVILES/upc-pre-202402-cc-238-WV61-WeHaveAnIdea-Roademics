@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:roademics/data/roadmaps/repository/roadmap_repository_impl.dart';
 import 'package:roademics/domain/roadmaps/entities/roadmap_entity.dart';
+import 'package:roademics/domain/roadmaps/entities/node_entity.dart'; 
+import 'package:roademics/domain/roadmaps/entities/edge_entity.dart';
 import 'package:roademics/domain/roadmaps/repositories/roadmaps_repository.dart';
 import 'package:roademics/presentation/roadmaps/widgets/node_widget.dart';
 import 'package:roademics/presentation/roadmaps/widgets/edge_widget.dart';
@@ -25,7 +26,7 @@ class _RoadmapScreenState extends State<RoadmapScreen> {
 
   Future<void> _loadRoadmap() async {
     try {
-      final loadedRoadmap = await widget.roadmapRepository.getRoadmapById("your-roadmap-id");
+      final loadedRoadmap = await widget.roadmapRepository.fetchRoadmap("1");
       setState(() {
         roadmap = loadedRoadmap;
       });

@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:roademics/data/roadmaps/repository/roadmap_repository_impl.dart';
 import 'package:roademics/presentation/roadmaps/screens/roadmap_screen.dart';
-import 'package:roademics/data/roadmaps/remote/roadmaps_service.dart';
+
 
 void main() {
-  final roadmapsService = RoadmapsService(token: "your-auth-token");
-  final roadmapRepository = RoadmapRepositoryImpl(roadmapsService);
+    final roadmapRepository = RoadmapRepositoryImpl();
 
   runApp(MyApp(roadmapRepository: roadmapRepository));
 }

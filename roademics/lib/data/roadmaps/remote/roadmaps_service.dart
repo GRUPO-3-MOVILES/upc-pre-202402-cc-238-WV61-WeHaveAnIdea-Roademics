@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:roademics/core/utils/constants/app_constants.dart';
-import 'package:roademics/domain/roadmaps/entities/roadmap_entity.dart';
+import 'package:roademics/data/roadmaps/remote/roadmaps_model.dart';
 
 class RoadmapsService {
   final String baseUrl = AppConstants.baseUrl;
@@ -17,13 +17,13 @@ class RoadmapsService {
   }
 
   // GET: Obtener un roadmap por ID
-  Future<Roadmap?> getRoadmapById(String roadmapId) async {
+  Future<RoadmapModel?> getRoadmapById(String roadmapId) async {
     final response = await http.get(
       Uri.parse('$baseUrl${AppConstants.roadmaps}/$roadmapId'),
       headers: _headers,
     );
     if (response.statusCode == 200 && response.body.isNotEmpty) {
-      return Roadmap.fromJson(json.decode(response.body));
+      return RoadmapModel.fromJson(json.decode(response.body)); // Devuelve RoadmapModel
     } else {
       _handleHttpError(response, 'obtener el roadmap');
     }
@@ -31,51 +31,45 @@ class RoadmapsService {
   }
 
   // GET: Obtener roadmaps por UserID
-  Future<List<Roadmap>> getRoadmapsByUserId(String userId) async {
+  Future<List<RoadmapModel>> getRoadmapsByUserId(String userId) async {
     final response = await http.get(
       Uri.parse('$baseUrl${AppConstants.roadmaps}/user/$userId'),
       headers: _headers,
     );
     if (response.statusCode == 200 && response.body.isNotEmpty) {
       final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => Roadmap.fromJson(item)).toList();
+      return data.map((item) => RoadmapModel.fromJson(item)).toList(); // Devuelve List<RoadmapModel>
     } else {
       _handleHttpError(response, 'obtener los roadmaps por UserID');
     }
     return []; // Agregar este retorno para listas vacías en caso de error
   }
 
-  // POST: Crear un nuevo roadmap
-  Future<Roadmap> createRoadmap(Roadmap roadmap) async {
+  // POST: Crear un nuevo roadmap (debe recibir RoadmapModel desde el repositorio)
+  Future<RoadmapModel> createRoadmap(RoadmapModel roadmapModel) async {
     final response = await http.post(
       Uri.parse('$baseUrl${AppConstants.roadmaps}/create'),
       headers: _headers,
-      body: json.encode(roadmap.toJson()),
+      body: jsonEncode(roadmapModel.toJson()), // Usa toJson de RoadmapModel
     );
-    if ((response.statusCode == 200 || response.statusCode == 201) &&
-        response.body.isNotEmpty) {
-      return Roadmap.fromJson(json.decode(response.body));
+
+    if (response.statusCode == 200) {
+      return RoadmapModel.fromJson(jsonDecode(response.body));
     } else {
-      _handleHttpError(response, 'crear el roadmap');
+      throw Exception('Error al crear el roadmap');
     }
-    throw const HttpException(
-        'Error inesperado al crear el roadmap'); // Lanzar excepción explícita en caso de error inesperado
   }
 
-  // PUT: Actualizar un roadmap existente
-  Future<void> updateRoadmap(String roadmapId, Roadmap roadmap) async {
+  // PUT: Actualizar un roadmap existente (debe recibir RoadmapModel desde el repositorio)
+  Future<void> updateRoadmap(String roadmapId, RoadmapModel roadmapModel) async {
     final response = await http.put(
       Uri.parse('$baseUrl${AppConstants.roadmaps}/update'),
       headers: _headers,
-      body: json.encode({
-        'id': roadmapId,
-        ...roadmap.toJson(),
-      }),
+      body: jsonEncode(roadmapModel.toJson()), // Usa toJson de RoadmapModel
     );
     if (response.statusCode != 200) {
       _handleHttpError(response, 'actualizar el roadmap');
     }
-    return; // Declaración explícita de retorno para funciones void
   }
 
   // DELETE: Eliminar un roadmap por ID
@@ -87,7 +81,6 @@ class RoadmapsService {
     if (response.statusCode != 200) {
       _handleHttpError(response, 'eliminar el roadmap');
     }
-    return; // Declaración explícita de retorno para funciones void
   }
 
   // Encabezados comunes para autenticación y tipo de contenido

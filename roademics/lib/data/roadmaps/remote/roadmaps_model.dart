@@ -1,129 +1,75 @@
+import 'package:roademics/domain/roadmaps/entities/roadmap_entity.dart';
+import 'package:roademics/data/roadmaps/remote/node_model.dart';
+import 'package:roademics/data/roadmaps/remote/edge_model.dart';
+
 class RoadmapModel {
   final String id;
   final String ownerId;
   final String title;
   final String description;
-  final List<Node> nodes;
-  final List<Edge> edges;
+  final String? aiInteractionId;
   final bool isCompleted;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final List<NodeModel> nodes;
+  final List<EdgeModel> edges;
 
   RoadmapModel({
     required this.id,
     required this.ownerId,
     required this.title,
     required this.description,
+    this.aiInteractionId,
+    required this.isCompleted,
     required this.nodes,
     required this.edges,
-    required this.isCompleted,
-    required this.createdAt,
-    required this.updatedAt,
   });
 
-  // Método para crear una instancia de Roadmap desde un JSON
+  // Constructor para crear un RoadmapModel a partir de un Roadmap
+  factory RoadmapModel.fromEntity(Roadmap roadmap) {
+    return RoadmapModel(
+      id: roadmap.id,
+      ownerId: roadmap.ownerId,
+      title: roadmap.title,
+      description: roadmap.description,
+      aiInteractionId: roadmap.aiInteractionId,
+      isCompleted: roadmap.completed ?? false,
+      nodes: roadmap.nodes.map((node) => NodeModel(
+        nodeId: node.nodeId,
+        title: node.title,
+        description: node.description,
+        isStartNode: node.isStartNode,
+        isEndNode: node.isEndNode,
+      )).toList(),
+      edges: roadmap.edges.map((edge) => EdgeModel(
+        fromNodeId: edge.fromNodeId,
+        toNodeId: edge.toNodeId,
+        label: edge.label,
+        description: edge.description,
+        relationshipType: edge.relationshipType,
+      )).toList(),
+    );
+  }
+
   factory RoadmapModel.fromJson(Map<String, dynamic> json) {
     return RoadmapModel(
-      id: json['_id'],
+      id: json['id'],
       ownerId: json['ownerId'],
       title: json['title'],
       description: json['description'],
-      nodes: List<Node>.from(json['nodes'].map((node) => Node.fromJson(node))),
-      edges: List<Edge>.from(json['edges'].map((edge) => Edge.fromJson(edge))),
+      aiInteractionId: json['aiInteractionId'],
       isCompleted: json['isCompleted'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
+      nodes: (json['nodes'] as List).map((node) => NodeModel.fromJson(node)).toList(),
+      edges: (json['edges'] as List).map((edge) => EdgeModel.fromJson(edge)).toList(),
     );
   }
 
-  // Método para convertir una instancia de Roadmap a JSON
-  Map<String, dynamic> toJson() {
-    return {
-      '_id': id,
-      'ownerId': ownerId,
-      'title': title,
-      'description': description,
-      'nodes': nodes.map((node) => node.toJson()).toList(),
-      'edges': edges.map((edge) => edge.toJson()).toList(),
-      'isCompleted': isCompleted,
-      'createdAt': createdAt.toIso8601String(),
-      'updatedAt': updatedAt.toIso8601String(),
-    };
-  }
-}
-
-class Node {
-  final String nodeId;
-  final String title;
-  final String description;
-  final bool isStartNode;
-  final bool isEndNode;
-
-  Node({
-    required this.nodeId,
-    required this.title,
-    required this.description,
-    required this.isStartNode,
-    required this.isEndNode,
-  });
-
-  // Método para crear una instancia de Node desde un JSON
-  factory Node.fromJson(Map<String, dynamic> json) {
-    return Node(
-      nodeId: json['nodeId'],
-      title: json['title'],
-      description: json['description'],
-      isStartNode: json['isStartNode'],
-      isEndNode: json['isEndNode'],
-    );
-  }
-
-  // Método para convertir una instancia de Node a JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'nodeId': nodeId,
-      'title': title,
-      'description': description,
-      'isStartNode': isStartNode,
-      'isEndNode': isEndNode,
-    };
-  }
-}
-
-class Edge {
-  final String fromNodeId;
-  final String toNodeId;
-  final String label;
-  final String description;
-  final String relationshipType;
-
-  Edge({
-    required this.fromNodeId,
-    required this.toNodeId,
-    required this.label,
-    required this.description,
-    required this.relationshipType,
-  });
-
-  // Método para crear una instancia de Edge desde un JSON
-  factory Edge.fromJson(Map<String, dynamic> json) {
-    return Edge(
-      fromNodeId: json['fromNodeId'],
-      toNodeId: json['toNodeId'],
-      label: json['label'],
-      description: json['description'],
-      relationshipType: json['relationshipType'],
-    );
-  }
-
-  // Método para convertir una instancia de Edge a JSON
-  Map<String, dynamic> toJson() {
-    return {
-      'fromNodeId': fromNodeId,
-      'toNodeId': toNodeId,
-      'label': label,
-      'description': description,
-      'relationshipType': relationshipType,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'ownerId': ownerId,
+        'title': title,
+        'description': description,
+        'aiInteractionId': aiInteractionId,
+        'isCompleted': isCompleted,
+        'nodes': nodes.map((node) => node.toJson()).toList(),
+        'edges': edges.map((edge) => edge.toJson()).toList(),
+      };
 }
