@@ -9,6 +9,9 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
   ProfileBloc({required this.profileRepository}) : super(ProfileInitial()) {
     on<LoadProfile>(_onLoadProfile);
     on<UpdateProfile>(_onUpdateProfile);
+    on<UpdatePhoneNumber>(_onUpdatePhoneNumber);
+    on<UpdateEmailAddress>(_onUpdateEmailAddress);
+    on<UpdatePassword>(_onUpdatePassword); // Asegúrate de agregar esto
   }
 
   void _onLoadProfile(LoadProfile event, Emitter<ProfileState> emit) async {
@@ -26,6 +29,43 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     try {
       final updatedProfile = await profileRepository.updateProfile(event.profile);
       emit(ProfileLoaded(profile: updatedProfile));
+    } catch (e) {
+      emit(ProfileError(error: e.toString()));
+    }
+  }
+
+  void _onUpdatePhoneNumber(UpdatePhoneNumber event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoading());
+    try {
+      final updatedProfile = await profileRepository.updatePhoneNumber(event.phoneNumber);
+      emit(ProfileLoaded(profile: updatedProfile));
+    } catch (e) {
+      emit(ProfileError(error: e.toString()));
+    }
+  }
+
+  void _onUpdateEmailAddress(UpdateEmailAddress event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoading());
+    try {
+      final updatedProfile = await profileRepository.updateEmailAddress(event.emailAddress);
+      emit(ProfileLoaded(profile: updatedProfile));
+    } catch (e) {
+      emit(ProfileError(error: e.toString()));
+    }
+  }
+
+  void _onUpdatePassword(UpdatePassword event, Emitter<ProfileState> emit) async {
+    emit(ProfileLoading());
+    try {
+      final result = await profileRepository.updatePassword(
+        event.currentPassword,
+        event.newPassword,
+      );
+      if (result) {
+        emit(ProfileSuccess(message: 'Contraseña actualizada correctamente'));
+      } else {
+        emit(ProfileError(error: 'Error al actualizar la contraseña'));
+      }
     } catch (e) {
       emit(ProfileError(error: e.toString()));
     }

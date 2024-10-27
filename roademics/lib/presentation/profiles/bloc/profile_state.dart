@@ -13,3 +13,9 @@ class ProfileError extends ProfileState {
 
   ProfileError({required this.error});
 }
+
+class ProfileSuccess extends ProfileState {
+  final String message;
+
+  ProfileSuccess({required this.message});
+}

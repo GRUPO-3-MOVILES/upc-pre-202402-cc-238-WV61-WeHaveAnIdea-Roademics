@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl_phone_number_input/intl_phone_number_input.dart';
 import 'package:roademics/presentation/profiles/bloc/profile_bloc.dart';
 import 'package:roademics/presentation/profiles/bloc/profile_event.dart';
 import 'package:roademics/presentation/profiles/bloc/profile_state.dart';
+import 'package:roademics/presentation/profiles/widgets/nav_bar.dart';
 
 class PhoneNumbersPage extends StatefulWidget {
-  const PhoneNumbersPage({Key? key}) : super(key: key);
+  const PhoneNumbersPage({super.key});
 
   @override
-  _PhoneNumbersPageState createState() => _PhoneNumbersPageState();
+  PhoneNumbersPageState createState() => PhoneNumbersPageState();
 }
 
-class _PhoneNumbersPageState extends State<PhoneNumbersPage> {
+class PhoneNumbersPageState extends State<PhoneNumbersPage> {
   late ProfileBloc _profileBloc;
   String phoneNumber = "";
   bool isEditing = false;
@@ -98,7 +100,7 @@ class _PhoneNumbersPageState extends State<PhoneNumbersPage> {
           return const Center(child: Text("No se encontraron datos"));
         },
       ),
-      bottomNavigationBar: const NavBar(), // Añade el NavBar
+      bottomNavigationBar: const NavBar(),
     );
   }
 

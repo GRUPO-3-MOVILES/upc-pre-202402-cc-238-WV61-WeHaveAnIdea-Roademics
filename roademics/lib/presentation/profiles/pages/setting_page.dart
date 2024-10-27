@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:roademics/presentation/profiles/pages/change_password_page.dart';
 import 'package:roademics/presentation/profiles/pages/email_addresses_page.dart';
+import 'package:roademics/presentation/profiles/pages/phone_numbers_page.dart';
 import 'package:roademics/presentation/profiles/widgets/nav_bar.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -46,13 +48,23 @@ class SettingsPage extends StatelessWidget {
                     );
                   },
                 ),
-                const ListTile(
-                  title: Text("Números de Teléfono"),
-                  onTap: null, // Agrega página aquí
+                ListTile(
+                  title: const Text("Números de Teléfono"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const PhoneNumbersPage()),
+                    );
+                  },
                 ),
-                const ListTile(
-                  title: Text("Cambio de Contraseña"),
-                  onTap: null, // Agrega página aquí
+                ListTile(
+                  title: const Text("Cambio de Contraseña"),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => const ChangePasswordPage()),
+                    );
+                  },
                 ),
               ],
             ),

@@ -4,6 +4,7 @@ import 'package:roademics/core/utils/constants/app_constants.dart';
 import 'package:roademics/domain/profiles/entities/profile_model.dart';
 import 'package:http/http.dart' as http;
 
+
 class ProfileService {
   Future<ProfileModel> getProfile() async {
     final url = Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}');
@@ -29,5 +30,23 @@ class ProfileService {
       return ProfileModel.fromJson(json);
     }
     throw Exception('Error al actualizar el perfil');
+  }
+
+  Future<bool> updatePassword(String currentPassword, String newPassword) async {
+    final url = Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}/update-password');
+    final response = await http.post(
+      url,
+      headers: {
+        HttpHeaders.contentTypeHeader: 'application/json',
+      },
+      body: jsonEncode({
+        'currentPassword': currentPassword,
+        'newPassword': newPassword,
+      }),
+    );
+    if (response.statusCode == HttpStatus.ok) {
+      return true;
+    }
+    return false;
   }
 }

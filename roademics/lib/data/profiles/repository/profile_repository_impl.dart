@@ -16,4 +16,29 @@ class ProfileRepositoryImpl implements ProfileRepository {
   Future<ProfileModel> updateProfile(ProfileModel profile) async {
     return await _service.updateProfile(profile);
   }
+
+  @override
+  Future<ProfileModel> updatePhoneNumber(String phoneNumber) async {
+    final profile = await _service.getProfile();
+    final updatedProfile = profile.copyWith(
+      personalInformation: profile.personalInformation.copyWith(
+        phoneNumber: phoneNumber,
+      ),
+    );
+    return await _service.updateProfile(updatedProfile);
+  }
+
+  @override
+  Future<ProfileModel> updateEmailAddress(String email) async {
+    final profile = await _service.getProfile();
+    final updatedProfile = profile.copyWith(
+      email: email,
+    );
+    return await _service.updateProfile(updatedProfile);
+  }
+
+  @override
+  Future<bool> updatePassword(String currentPassword, String newPassword) async {
+    return await _service.updatePassword(currentPassword, newPassword);
+  }
 }
