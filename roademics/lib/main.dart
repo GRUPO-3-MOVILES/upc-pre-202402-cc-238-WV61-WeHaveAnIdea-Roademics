@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
+import 'package:roademics/presentation/authentication/pages/login_page.dart';
 
 void main() {
   runApp(const MainApp());
@@ -9,12 +12,12 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      home: Scaffold(
-        body: Center(
-          child: Text('Hello World!'),
-        ),
-      ),
-    );
+    return BlocProvider<LoginBloc>(
+        create: (context) => LoginBloc(),
+        child: MaterialApp(
+          darkTheme: ThemeData.dark(),
+          theme: ThemeData.light(),
+          home: const LoginPage(),
+        ));
   }
 }
