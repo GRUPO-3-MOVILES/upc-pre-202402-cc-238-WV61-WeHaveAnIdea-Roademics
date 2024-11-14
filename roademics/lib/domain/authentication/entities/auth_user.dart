@@ -1,10 +1,10 @@
-class User {
-  final int id;
+class AuthUser {
+  final String id;
   final String username;
   final String password;
   final String token;
 
-  const User({
+  const AuthUser({
     required this.id,
     required this.username,
     required this.password,

@@ -1,4 +1,4 @@
-import 'package:roademics/domain/authentication/entities/user.dart';
+import 'package:roademics/domain/authentication/entities/auth_user.dart';
 
 class UserDto {
   final String id;
@@ -22,9 +22,9 @@ class UserDto {
     );
   }
 
-  User toUser() {
-    return User(
-      id: int.parse(id),
+  AuthUser toUser() {
+    return AuthUser(
+      id: id,
       username: username,
       password: password,
       token: token,

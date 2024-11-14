@@ -13,7 +13,7 @@ class LoginLoading extends LoginState {
 }
 
 class LoginSuccess extends LoginState {
-  final User user;
+  final AuthUser user;
 
   const LoginSuccess({required this.user});
 }
