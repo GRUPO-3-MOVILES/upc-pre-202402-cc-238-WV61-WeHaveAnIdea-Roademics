@@ -1,4 +1,5 @@
-import 'package:roademics/domain/authentication/entities/user.dart';
+
+import 'package:roademics/domain/authentication/entities/auth_user.dart';
 
 abstract class LoginState {
   const LoginState();

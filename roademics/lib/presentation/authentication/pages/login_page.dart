@@ -3,8 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_event.dart';
 import 'package:roademics/presentation/authentication/bloc/login_state.dart';
-import 'package:roademics/presentation/authentication/bloc/password_hudden_cubit.dart';
-import 'package:roademics/presentation/registration/sign_up_flow.dart'; // Asegúrate de importar la ruta del flujo de registro
+import 'package:roademics/shared/presentation/bloc/password_hudden_cubit.dart';
+import 'package:roademics/presentation/registration/sign_up_flow.dart'; 
 import 'package:roademics/shared/presentation/pages/home_page.dart';
 
 class LoginPage extends StatefulWidget {
