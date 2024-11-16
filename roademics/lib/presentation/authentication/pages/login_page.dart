@@ -3,8 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_event.dart';
 import 'package:roademics/presentation/authentication/bloc/login_state.dart';
+import 'package:roademics/presentation/profile/bloc/profile_bloc.dart';
+import 'package:roademics/presentation/registration/bloc/signup_bloc.dart';
+import 'package:roademics/presentation/registration/pages/sign_up_flow.dart';
 import 'package:roademics/shared/presentation/bloc/password_hudden_cubit.dart';
-import 'package:roademics/presentation/registration/sign_up_flow.dart'; 
 import 'package:roademics/shared/presentation/pages/home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -28,16 +30,19 @@ class _LoginPageState extends State<LoginPage> {
             listener: (context, state) {
               if (state is LoginSuccess) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Welcome: ${state.user.username}')));
+                  SnackBar(content: Text('Welcome: ${state.user.username}')),
+                );
 
                 Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomePage(),
-                    ));
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                );
               } else if (state is LoginError) {
-                ScaffoldMessenger.of(context)
-                    .showSnackBar(SnackBar(content: Text(state.message)));
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(state.message)),
+                );
               }
             },
             child: Padding(
@@ -76,9 +81,11 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: () => context
                                 .read<PasswordHiddenCubit>()
                                 .togglePasswordVisibility(),
-                            icon: Icon(isPasswordHidden
-                                ? Icons.visibility_off
-                                : Icons.visibility),
+                            icon: Icon(
+                              isPasswordHidden
+                                  ? Icons.visibility_off
+                                  : Icons.visibility,
+                            ),
                           ),
                         ),
                       );
@@ -91,8 +98,12 @@ class _LoginPageState extends State<LoginPage> {
                       onPressed: () {
                         final String username = _usernameController.text;
                         final String password = _passwordController.text;
-                        context.read<LoginBloc>().add(LoginSubmitted(
-                            username: username, password: password));
+                        context.read<LoginBloc>().add(
+                              LoginSubmitted(
+                                username: username,
+                                password: password,
+                              ),
+                            );
                       },
                       child: const Text('Log In'),
                     ),
@@ -103,7 +114,17 @@ class _LoginPageState extends State<LoginPage> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SignUpFlow(),
+                          builder: (context) => MultiBlocProvider(
+                            providers: [
+                              BlocProvider<SignupBloc>(
+                                create: (_) => SignupBloc(),
+                              ),
+                              BlocProvider<ProfileBloc>(
+                                create: (_) => ProfileBloc(),
+                              ),
+                            ],
+                            child: const SignUpFlowPage(),
+                          ),
                         ),
                       );
                     },

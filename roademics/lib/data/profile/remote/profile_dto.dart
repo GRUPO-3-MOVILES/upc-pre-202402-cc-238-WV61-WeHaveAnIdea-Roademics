@@ -1,4 +1,4 @@
-import 'package:roademics/domain/profiles/entities/profile.dart';
+import 'package:roademics/domain/profile/entities/profile.dart';
 
 class ProfileDto {
   final String id;
@@ -24,7 +24,8 @@ class ProfileDto {
       id: json['id'] ?? '',
       createdAt: DateTime.parse(json['createdAt']),
       updatedAt: DateTime.parse(json['updatedAt']),
-      personalInformation: PersonalInformationDto.fromJson(json['personalInformation']),
+      personalInformation:
+          PersonalInformationDto.fromJson(json['personalInformation']),
       email: EmailDto.fromJson(json['email']),
       profileType: json['profileType'] ?? '',
       biography: json['biography'] ?? '',
@@ -126,7 +127,7 @@ class PersonNameDto {
     required this.lastName,
     required this.fullName,
   });
-  
+
   factory PersonNameDto.fromJson(Map<String, dynamic> json) {
     return PersonNameDto(
       firstName: json['firstName'] ?? '',
@@ -134,7 +135,7 @@ class PersonNameDto {
       fullName: json['fullName'] ?? '',
     );
   }
-  
+
   PersonName toPersonName() {
     return PersonName(
       firstName: firstName,

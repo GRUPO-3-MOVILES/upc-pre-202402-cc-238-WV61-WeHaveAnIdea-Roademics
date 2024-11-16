@@ -1,11 +1,14 @@
 import 'package:roademics/core/utils/resources/generic_resource.dart';
-import 'package:roademics/data/profiles/remote/profile_service.dart';
-import 'package:roademics/data/profiles/remote/profile_dto.dart';
-import 'package:roademics/domain/profiles/entities/profile.dart';
+import 'package:roademics/data/profile/remote/profile_service.dart';
+import 'package:roademics/data/profile/remote/profile_dto.dart';
+import 'package:roademics/domain/profile/entities/profile.dart';
 
 class ProfileRepository {
+  final ProfileService _profileService = ProfileService();
+
   Future<GenericResource<Profile>> getProfileById(String id) async {
-    GenericResource<ProfileDto> result = await ProfileService().getProfileById(id: id);
+    GenericResource<ProfileDto> result =
+        await _profileService.getProfileById(id: id);
 
     if (result is Success) {
       return Success(result.data!.toProfile());
@@ -15,10 +18,12 @@ class ProfileRepository {
   }
 
   Future<GenericResource<List<Profile>>> getAllProfiles() async {
-    GenericResource<List<ProfileDto>> result = await ProfileService().getAllProfiles();
+    GenericResource<List<ProfileDto>> result =
+        await _profileService.getAllProfiles();
 
     if (result is Success) {
-      List<Profile> profiles = result.data!.map((dto) => dto.toProfile()).toList();
+      List<Profile> profiles =
+          result.data!.map((dto) => dto.toProfile()).toList();
       return Success(profiles);
     } else {
       return Error(result.message!);
@@ -38,7 +43,7 @@ class ProfileRepository {
     required String biography,
     required String profileType,
   }) async {
-    GenericResource<ProfileDto> result = await ProfileService().createProfile(
+    GenericResource<ProfileDto> result = await _profileService.createProfile(
       city: city,
       state: state,
       country: country,
@@ -73,7 +78,7 @@ class ProfileRepository {
     required String biography,
     required String profileType,
   }) async {
-    GenericResource<ProfileDto> result = await ProfileService().updateProfile(
+    GenericResource<ProfileDto> result = await _profileService.updateProfile(
       id: id,
       city: city,
       state: state,

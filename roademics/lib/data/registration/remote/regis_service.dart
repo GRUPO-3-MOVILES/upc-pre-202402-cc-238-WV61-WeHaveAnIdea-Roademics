@@ -1,99 +1,42 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:roademics/core/utils/constants/app_constants.dart';
 import 'package:roademics/core/utils/resources/generic_resource.dart';
-import 'package:roademics/data/profiles/remote/profile_dto.dart';
+import 'package:roademics/data/registration/remote/regis_dto.dart';
 import 'package:roademics/data/registration/remote/regis_request.dart';
+import 'dart:developer' as developer;
 
-class RegisService {
-
-  Future<GenericResource<ProfileDto>> register(RegisRequest request) async {
+class RegistrationService {
+  Future<GenericResource<RegistrationDto>> signUp({
+    required String username,
+    required String password,
+  }) async {
     try {
-      http.Response response = await http.post(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}/register'),
+      developer
+          .log("RegistrationService: Sending signup request for $username");
+      http.Response userResponse = await http.post(
+        Uri.parse('${AppConstants.baseUrl}${AppConstants.auth}/sign-up'),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(request.toMap()),
+        body: jsonEncode(RegistrationRequest(
+          username: username,
+          password: password,
+        ).toAuthMap()),
       );
 
-      if (response.statusCode == 201) {
-        return Success(ProfileDto.fromJson(jsonDecode(response.body)));
+      if (userResponse.statusCode == HttpStatus.ok) {
+        developer.log("RegistrationService: Signup successful for $username");
+        final Map<String, dynamic> json = jsonDecode(userResponse.body);
+        return Success(RegistrationDto.fromJson(json));
       } else {
-        return const Error('Failed to register');
+        developer.log(
+            "RegistrationService: Signup failed for $username. Response: ${userResponse.body}");
+        return const Error('Failed to sign up');
       }
     } catch (e) {
-      return Error('An error occurred: $e');
-    }
-  }
-  
-  Future<GenericResource<ProfileDto>> createProfile(RegisRequest request) async {
-    try {
-      http.Response response = await http.post(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(request.toMap()),
-      );
-
-      if (response.statusCode == 201) {
-        return Success(ProfileDto.fromJson(jsonDecode(response.body)));
-      } else {
-        return const Error('Failed to create profile');
-      }
-    } catch (e) {
-      return Error('An error occurred: $e');
-    }
-  }
-
-  Future<GenericResource<ProfileDto>> updateProfile(String id, RegisRequest request) async {
-    try {
-      http.Response response = await http.put(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}/$id'),
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode(request.toMap()),
-      );
-
-      if (response.statusCode == 200) {
-        return Success(ProfileDto.fromJson(jsonDecode(response.body)));
-      } else {
-        return const Error('Failed to update profile');
-      }
-    } catch (e) {
-      return Error('An error occurred: $e');
-    }
-  }
-
-  Future<GenericResource<ProfileDto>> getProfileById(String id) async {
-    try {
-      http.Response response = await http.get(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}/$id'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        return Success(ProfileDto.fromJson(jsonDecode(response.body)));
-      } else {
-        return const Error('Failed to load profile');
-      }
-    } catch (e) {
-      return Error('An error occurred: $e');
-    }
-  }
-
-  Future<GenericResource<List<ProfileDto>>> getAllProfiles() async {
-    try {
-      http.Response response = await http.get(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}'),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        List<dynamic> body = jsonDecode(response.body);
-        List<ProfileDto> profiles = body.map((dynamic item) => ProfileDto.fromJson(item)).toList();
-        return Success(profiles);
-      } else {
-        return const Error('Failed to load profiles');
-      }
-    } catch (e) {
-      return Error('An error occurred: $e');
+      developer.log(
+          "RegistrationService: Error occurred during signup for $username. Error: $e");
+      return Error('An error occurred during sign-up: $e');
     }
   }
 }

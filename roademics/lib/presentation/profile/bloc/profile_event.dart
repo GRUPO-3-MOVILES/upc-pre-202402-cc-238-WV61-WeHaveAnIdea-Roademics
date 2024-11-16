@@ -1,4 +1,8 @@
-class RegistrationUser {
+abstract class ProfileEvent {
+  const ProfileEvent();
+}
+
+class CreateProfile extends ProfileEvent {
   final String city;
   final String state;
   final String country;
@@ -10,11 +14,8 @@ class RegistrationUser {
   final DateTime dateOfBirth;
   final String biography;
   final String profileType;
-  final String username;
-  final String password;
-  final List<String> roles;
 
-  const RegistrationUser({
+  const CreateProfile({
     required this.city,
     required this.state,
     required this.country,
@@ -25,9 +26,6 @@ class RegistrationUser {
     required this.lastName,
     required this.dateOfBirth,
     required this.biography,
-    required this.profileType,
-    required this.username,
-    required this.password,
-    this.roles = const ['ROLE_USER'],
+    this.profileType = 'FREE_USER',
   });
 }
