@@ -9,6 +9,13 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  intl_phone_number_input: ^0.7.4
+  bloc: ^8.0.0
+  flutter_bloc: ^8.1.6
+  http: ^1.2.2
+  cached_network_image: ^3.4.1
+
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +24,15 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Raleway-VariableFont_wght.ttf
+      
+  assets:
+        - assets/img/home.png
+        - assets/img/notifications.png
+        - assets/img/opportunities.png
+        - assets/img/profile.png
+        - assets/img/roadmaps.png
