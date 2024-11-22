@@ -20,6 +20,7 @@ class MyApp extends StatelessWidget {
           child: Login(),
         ),
       ),
+      home: HomePage(), // Invoca HomePage aquí
     );
   }
 }
