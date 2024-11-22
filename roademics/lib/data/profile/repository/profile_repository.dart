@@ -30,19 +30,19 @@ class ProfileRepository {
     }
   }
 
-  Future<GenericResource<Profile>> createProfile({
-    required String city,
-    required String state,
-    required String country,
-    required String zipCode,
-    required String phoneNumber,
-    required String email,
-    required String firstName,
-    required String lastName,
-    required DateTime dateOfBirth,
-    required String biography,
-    required String profileType,
-  }) async {
+  Future<GenericResource<Profile>> createProfile(
+    String city,
+    String state,
+    String country,
+    String zipCode,
+    String phoneNumber,
+    String email,
+    String firstName,
+    String lastName,
+    DateTime dateOfBirth,
+    String biography,
+    String profileType,
+  ) async {
     GenericResource<ProfileDto> result = await _profileService.createProfile(
       city: city,
       state: state,

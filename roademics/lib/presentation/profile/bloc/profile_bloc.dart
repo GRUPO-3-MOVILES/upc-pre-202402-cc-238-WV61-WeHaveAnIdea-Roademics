@@ -9,17 +9,17 @@ class ProfileBloc extends Bloc<ProfileEvent, ProfileState> {
     on<CreateProfile>((event, emit) async {
       emit(const ProfileLoading());
       final result = await ProfileRepository().createProfile(
-        city: event.city,
-        state: event.state,
-        country: event.country,
-        zipCode: event.zipCode,
-        phoneNumber: event.phoneNumber,
-        email: event.email,
-        firstName: event.firstName,
-        lastName: event.lastName,
-        dateOfBirth: event.dateOfBirth,
-        biography: event.biography,
-        profileType: event.profileType,
+        event.city,
+        event.state,
+        event.country,
+        event.zipCode,
+        event.phoneNumber,
+        event.email,
+        event.firstName,
+        event.lastName,
+        event.dateOfBirth,
+        event.biography,
+        event.profileType,
       );
 
       if (result is Success) {

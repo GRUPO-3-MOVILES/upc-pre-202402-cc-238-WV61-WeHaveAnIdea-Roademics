@@ -9,6 +9,7 @@ class ProfileRequest {
   final String lastName;
   final DateTime dateOfBirth;
   final String biography;
+  final String profileType;
 
   const ProfileRequest({
     required this.city,
@@ -21,6 +22,7 @@ class ProfileRequest {
     required this.lastName,
     required this.dateOfBirth,
     required this.biography,
+    required this.profileType,
   });
 
   Map<String, dynamic> toProfileMap() {
@@ -35,6 +37,7 @@ class ProfileRequest {
       'lastName': lastName,
       'dateOfBirth': dateOfBirth.toIso8601String(),
       'biography': biography,
+      'profileType': profileType,
     };
   }
 }

@@ -13,8 +13,8 @@ class RegistrationRepository {
   ) async {
     final GenericResource<RegistrationDto> result =
         await _registrationService.signUp(
-      username: usernam,
-      password: password,
+      usernam,
+      password,
     );
 
     if (result is Success) {

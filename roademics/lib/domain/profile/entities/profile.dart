@@ -1,7 +1,7 @@
 class Profile {
   final String id;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  final DateTime? createdAt;
+  final DateTime? updatedAt;
   final PersonalInformation personalInformation;
   final Email email;
   final String profileType;
@@ -9,8 +9,8 @@ class Profile {
 
   const Profile({
     required this.id,
-    required this.createdAt,
-    required this.updatedAt,
+    this.createdAt,
+    this.updatedAt,
     required this.personalInformation,
     required this.email,
     required this.profileType,

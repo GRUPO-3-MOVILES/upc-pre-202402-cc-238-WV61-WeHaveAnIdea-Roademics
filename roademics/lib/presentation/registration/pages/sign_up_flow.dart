@@ -40,6 +40,8 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
   bool _isConfirmPasswordHidden = true;
   String? _passwordError;
 
+  String? _selectedProfileType;
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -58,12 +60,16 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
   }
 
   void _nextPage() {
-    if (_currentPage < 3) {
+    if (_currentPage < 4) {
       if (_currentPage == 0 &&
           _passwordController.text != _confirmPasswordController.text) {
         setState(() {
           _passwordError = 'Las contraseñas no coinciden';
         });
+      } else if (_currentPage == 1 && _selectedProfileType == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Debe seleccionar un tipo de perfil')),
+        );
       } else {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
@@ -109,6 +115,7 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
       lastName: _lastNameController.text,
       dateOfBirth: _dateOfBirth,
       biography: _biographyController.text,
+      profileType: _selectedProfileType!,
     );
 
     developer.log(
@@ -132,6 +139,7 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
           lastName: profileRequest.lastName,
           dateOfBirth: profileRequest.dateOfBirth,
           biography: profileRequest.biography,
+          profileType: profileRequest.profileType,
         ));
       }
 
@@ -194,6 +202,7 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
                   physics: const NeverScrollableScrollPhysics(),
                   children: [
                     _buildAccountInfoPage(),
+                    _buildProfileTypePage(),
                     _buildContactInfoPage(),
                     _buildLocationInfoPage(),
                     _buildBiographyPage(),
@@ -208,12 +217,12 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
                       onPressed: _previousPage,
                       child: const Text('Anterior'),
                     ),
-                  if (_currentPage < 3)
+                  if (_currentPage < 4)
                     TextButton(
                       onPressed: _nextPage,
                       child: const Text('Siguiente'),
                     ),
-                  if (_currentPage == 3)
+                  if (_currentPage == 4)
                     ElevatedButton(
                       onPressed: _completeSignUp,
                       child: const Text('Completar Registro'),
@@ -278,6 +287,44 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
                   });
                 },
               ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileTypePage() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Selecciona tu tipo de perfil",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          ListTile(
+            title: const Text('EMPLOYER'),
+            leading: Radio<String>(
+              value: 'EMPLOYER',
+              groupValue: _selectedProfileType,
+              onChanged: (value) {
+                setState(() {
+                  _selectedProfileType = value;
+                });
+              },
+            ),
+          ),
+          ListTile(
+            title: const Text('PATHFINDER'),
+            leading: Radio<String>(
+              value: 'PATHFINDER',
+              groupValue: _selectedProfileType,
+              onChanged: (value) {
+                setState(() {
+                  _selectedProfileType = value;
+                });
+              },
             ),
           ),
         ],

@@ -26,6 +26,6 @@ class CreateProfile extends ProfileEvent {
     required this.lastName,
     required this.dateOfBirth,
     required this.biography,
-    this.profileType = 'FREE_USER',
+    required this.profileType,
   });
 }
