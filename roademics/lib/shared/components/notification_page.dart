@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:roademics/presentation/profiles/pages/profile_page.dart';
 import 'package:roademics/shared/components/home_page.dart';
+import 'package:roademics/shared/components/opportunities_page.dart';
 import 'package:roademics/shared/components/roadmap_page.dart';
 
 class NotificationPage extends StatelessWidget {
@@ -10,7 +11,7 @@ class NotificationPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Notificaciones'),
+        title: const Text('Notifications'),
         backgroundColor: const Color(0xFFF0FFFF),
       ),
       body: ListView(
@@ -211,7 +212,10 @@ class NotificationPage extends StatelessWidget {
               ),
               GestureDetector(
                 onTap: () {
-                  // Acción al presionar Opportunities
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const OpportunitiesPage()),
+                  );
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
