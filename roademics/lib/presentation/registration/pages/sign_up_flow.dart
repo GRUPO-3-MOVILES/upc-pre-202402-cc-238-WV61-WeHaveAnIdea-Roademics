@@ -182,259 +182,519 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => SignupBloc()),
-        BlocProvider(create: (_) => ProfileBloc()),
-      ],
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text("Roademics"),
-          centerTitle: true,
+ Widget build(BuildContext context) {
+  return MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => SignupBloc()),
+      BlocProvider(create: (_) => ProfileBloc()),
+    ],
+    child: Scaffold(
+      body: Container(
+        // Fondo global
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [
+              Color.fromARGB(255, 3, 37, 37),
+              Color.fromARGB(255, 7, 32, 78),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
-        body: SafeArea(
-          child: Column(
+        child: SafeArea(
+          child: Stack(
             children: [
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
-                  children: [
-                    _buildAccountInfoPage(),
-                    _buildProfileTypePage(),
-                    _buildContactInfoPage(),
-                    _buildLocationInfoPage(),
-                    _buildBiographyPage(),
-                  ],
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              Column(
                 children: [
-                  if (_currentPage > 0)
-                    TextButton(
-                      onPressed: _previousPage,
-                      child: const Text('Anterior'),
+                  Expanded(
+                    child: PageView(
+                      controller: _pageController,
+                      physics: const NeverScrollableScrollPhysics(),
+                      children: [
+                        _buildAccountInfoPage(),
+                        _buildProfileTypePage(),
+                        _buildContactInfoPage(),
+                        _buildLocationInfoPage(),
+                        _buildBiographyPage(),
+                      ],
                     ),
-                  if (_currentPage < 4)
-                    TextButton(
-                      onPressed: _nextPage,
-                      child: const Text('Siguiente'),
-                    ),
-                  if (_currentPage == 4)
-                    ElevatedButton(
-                      onPressed: _completeSignUp,
-                      child: const Text('Completar Registro'),
-                    ),
+                  ),
                 ],
               ),
+              // Botón "Retroceder"
+              if (_currentPage > 0)
+                Positioned(
+                  bottom: 50, // Ajustar para mover verticalmente
+                  left: 16, // Ajustar para mover horizontalmente
+                  child: IconButton(
+                    onPressed: _previousPage,
+                    icon: const Icon(
+                      Icons.arrow_back,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                    tooltip: 'Retroceder',
+                  ),
+                ),
+              // Botón "Avanzar"
+              if (_currentPage < 4)
+                Positioned(
+                  bottom: 50, // Ajustar para mover verticalmente
+                  right: 16, // Ajustar para mover horizontalmente
+                  child: IconButton(
+                    onPressed: _nextPage,
+                    icon: const Icon(
+                      Icons.arrow_forward,
+                      color: Colors.white,
+                      size: 32,
+                    ),
+                    tooltip: 'Avanzar',
+                  ),
+                ),
             ],
           ),
         ),
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget _buildAccountInfoPage() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Información de Cuenta",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                  labelText: 'Username', prefixIcon: Icon(Icons.person_add))),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _passwordController,
-            obscureText: _isPasswordHidden,
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.lock),
-              labelText: 'Contraseña',
-              errorText: _passwordError,
-              suffixIcon: IconButton(
-                icon: Icon(_isPasswordHidden
-                    ? Icons.visibility_off
-                    : Icons.visibility),
-                onPressed: () {
-                  setState(() {
-                    _isPasswordHidden = !_isPasswordHidden;
-                  });
-                },
-              ),
-            ),
+ Widget _buildAccountInfoPage() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Información de Cuenta",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w600, // Aumentado el grosor del texto
+            color: Colors.white,
           ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _confirmPasswordController,
-            obscureText: _isConfirmPasswordHidden,
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.lock),
-              labelText: 'Confirmación de Contraseña',
-              errorText: _passwordError,
-              suffixIcon: IconButton(
-                icon: Icon(_isConfirmPasswordHidden
-                    ? Icons.visibility_off
-                    : Icons.visibility),
-                onPressed: () {
-                  setState(() {
-                    _isConfirmPasswordHidden = !_isConfirmPasswordHidden;
-                  });
-                },
-              ),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _usernameController,
+          decoration: const InputDecoration(
+            labelText: 'Username',
+            labelStyle: TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500, // Grosor ajustado
+              color: Colors.white,
             ),
+            prefixIcon: Icon(Icons.person_add, color: Colors.white),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildProfileTypePage() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Selecciona tu tipo de perfil",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          ListTile(
-            title: const Text('EMPLOYER'),
-            leading: Radio<String>(
-              value: 'EMPLOYER',
-              groupValue: _selectedProfileType,
-              onChanged: (value) {
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.normal, // Claridad ajustada para el input
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _passwordController,
+          obscureText: _isPasswordHidden,
+          decoration: InputDecoration(
+            labelText: 'Contraseña',
+            labelStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+            prefixIcon: const Icon(Icons.lock, color: Colors.white),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isPasswordHidden ? Icons.visibility_off : Icons.visibility,
+                color: Colors.white,
+              ),
+              onPressed: () {
                 setState(() {
-                  _selectedProfileType = value;
+                  _isPasswordHidden = !_isPasswordHidden;
                 });
               },
             ),
           ),
-          ListTile(
-            title: const Text('PATHFINDER'),
-            leading: Radio<String>(
-              value: 'PATHFINDER',
-              groupValue: _selectedProfileType,
-              onChanged: (value) {
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _confirmPasswordController,
+          obscureText: _isConfirmPasswordHidden,
+          decoration: InputDecoration(
+            labelText: 'Confirmación de Contraseña',
+            labelStyle: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.w500,
+              color: Colors.white,
+            ),
+            prefixIcon: const Icon(Icons.lock, color: Colors.white),
+            suffixIcon: IconButton(
+              icon: Icon(
+                _isConfirmPasswordHidden
+                    ? Icons.visibility_off
+                    : Icons.visibility,
+                color: Colors.white,
+              ),
+              onPressed: () {
                 setState(() {
-                  _selectedProfileType = value;
+                  _isConfirmPasswordHidden = !_isConfirmPasswordHidden;
                 });
               },
             ),
           ),
-        ],
-      ),
-    );
-  }
+          style: const TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.normal,
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
-  Widget _buildLocationInfoPage() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text("Información de Ubicación",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _cityController,
-            decoration: const InputDecoration(
-                labelText: 'Ciudad', prefixIcon: Icon(Icons.location_city)),
+Widget _buildContactInfoPage() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Información de Contacto",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
           ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _stateController,
-            decoration: const InputDecoration(
-                labelText: 'Provincia/Estado',
-                prefixIcon: Icon(Icons.location_city_outlined)),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _countryController,
-            decoration: const InputDecoration(
-                labelText: 'País',
-                prefixIcon: Icon(Icons.location_city_rounded)),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _zipCodeController,
-            decoration: const InputDecoration(
-                labelText: 'Código Postal',
-                prefixIcon: Icon(Icons.location_city_sharp)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactInfoPage() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Información de Contacto",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _firstNameController,
-            decoration: const InputDecoration(
-                labelText: 'Nombre', prefixIcon: Icon(Icons.person)),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _lastNameController,
-            decoration: const InputDecoration(
-                labelText: 'Apellido', prefixIcon: Icon(Icons.person)),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _phoneNumberController,
-            decoration: const InputDecoration(
-                labelText: 'Teléfono', prefixIcon: Icon(Icons.phone)),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _emailController,
-            decoration: const InputDecoration(
-                labelText: 'E-mail', prefixIcon: Icon(Icons.email)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBiographyPage() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Perfil",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          const Text("Cuéntanos un poco sobre ti para tu perfil."),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _biographyController,
-            decoration: const InputDecoration(
-              labelText: 'Biografía',
-              hintText: 'Ej: Me gusta la tecnología y la educación...',
-              prefixIcon: Icon(Icons.coffee),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _firstNameController,
+          decoration: const InputDecoration(
+            labelText: 'Nombre',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.person, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
             ),
-            maxLines: 5,
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
           ),
-        ],
-      ),
-    );
-  }
+          style: const TextStyle(color: Colors.white),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _lastNameController,
+          decoration: const InputDecoration(
+            labelText: 'Apellido',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.person, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _phoneNumberController,
+          decoration: const InputDecoration(
+            labelText: 'Teléfono',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.phone, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _emailController,
+          decoration: const InputDecoration(
+            labelText: 'E-mail',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.email, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildProfileTypePage() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Selecciona tu tipo de perfil",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 16),
+        ListTile(
+          title: const Text(
+            'EMPLOYER',
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: Radio<String>(
+            value: 'EMPLOYER',
+            groupValue: _selectedProfileType,
+            onChanged: (value) {
+              setState(() {
+                _selectedProfileType = value;
+              });
+            },
+            fillColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
+        ListTile(
+          title: const Text(
+            'PATHFINDER',
+            style: TextStyle(color: Colors.white),
+          ),
+          leading: Radio<String>(
+            value: 'PATHFINDER',
+            groupValue: _selectedProfileType,
+            onChanged: (value) {
+              setState(() {
+                _selectedProfileType = value;
+              });
+            },
+            fillColor: MaterialStateProperty.all(Colors.white),
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildLocationInfoPage() {
+  return Padding(
+    padding: const EdgeInsets.all(16.0),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          "Información de Ubicación",
+          style: TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        const SizedBox(height: 16),
+        TextField(
+          controller: _cityController,
+          decoration: const InputDecoration(
+            labelText: 'Ciudad',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.location_city, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _stateController,
+          decoration: const InputDecoration(
+            labelText: 'Provincia/Estado',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.location_city_outlined, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _countryController,
+          decoration: const InputDecoration(
+            labelText: 'País',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.location_city_rounded, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          controller: _zipCodeController,
+          decoration: const InputDecoration(
+            labelText: 'Código Postal',
+            labelStyle: TextStyle(color: Colors.white),
+            prefixIcon: Icon(Icons.location_city_sharp, color: Colors.white),
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white),
+            ),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        ),
+      ],
+    ),
+  );
+}
+
+Widget _buildBiographyPage() {
+  bool _termsAccepted = false;
+
+  return StatefulBuilder(
+    builder: (BuildContext context, StateSetter setState) {
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Text(
+              "Perfil",
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              "Cuéntanos un poco sobre ti para tu perfil.",
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.normal,
+                color: Colors.white,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Icon(
+                  Icons.coffee,
+                  color: Colors.white,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: TextField(
+                    controller: _biographyController,
+                    decoration: const InputDecoration(
+                      hintText: 'Ej: Me gusta la tecnología y la educación...',
+                      hintStyle: TextStyle(color: Colors.white70, fontSize: 16),
+                      enabledBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white70),
+                      ),
+                      focusedBorder: UnderlineInputBorder(
+                        borderSide: BorderSide(color: Colors.white, width: 2),
+                      ),
+                    ),
+                    maxLines: 5,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Sección de términos y condiciones
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Checkbox(
+                  value: _termsAccepted,
+                  activeColor: Colors.teal,
+                  checkColor: Colors.white,
+                  onChanged: (value) {
+                    setState(() {
+                      _termsAccepted = value!;
+                    });
+                  },
+                ),
+                const Text(
+                  'He leído y acepto los términos y condiciones',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.normal,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            // Mostrar el botón solo si se aceptaron los términos
+            if (_termsAccepted)
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.teal, // Color del botón
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 16.0,
+                        horizontal: 32.0,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12.0),
+                      ),
+                    ),
+                    onPressed: _completeSignUp,
+                    icon: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                    ),
+                    label: const Text(
+                      'Completar Registro',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+          ],
+        ),
+      );
+    },
+  );
+}
 }
