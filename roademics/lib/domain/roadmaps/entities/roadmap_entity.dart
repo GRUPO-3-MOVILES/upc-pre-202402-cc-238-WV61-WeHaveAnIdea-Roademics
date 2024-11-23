@@ -20,5 +20,16 @@ class Roadmap {
     this.aiInteractionId,
     required this.nodes,
     required this.edges,
-  });
+  }){
+    // Validaciones básicas
+    if (title.isEmpty) {
+      throw ArgumentError('El Roadmap debe tener un título.');
+    }
+    if (description.isEmpty) {
+      throw ArgumentError('El Roadmap debe tener una descripción.');
+    }
+    if (nodes.isEmpty) {
+      throw ArgumentError('El Roadmap debe contener al menos un nodo.');
+    }
+  }
 }

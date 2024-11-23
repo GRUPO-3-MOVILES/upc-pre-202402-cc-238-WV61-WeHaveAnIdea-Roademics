@@ -21,8 +21,15 @@ class RoadmapModel {
     required this.isCompleted,
     required this.nodes,
     required this.edges,
-  });
-
+  }) {
+    assert(id.isNotEmpty, 'El id no puede estar vacío');
+    assert(ownerId.isNotEmpty, 'El ownerId no puede estar vacío');
+    assert(title.isNotEmpty, 'El título no puede estar vacío');
+    assert(description.isNotEmpty, 'La descripción no puede estar vacía');
+    assert(nodes.isNotEmpty, 'Debe haber al menos un nodo en el roadmap');
+    assert(edges.length >= nodes.length - 1,
+        'Debe haber suficientes edges para conectar los nodos');
+  }
   // Constructor para crear un RoadmapModel a partir de un Roadmap
   factory RoadmapModel.fromEntity(Roadmap roadmap) {
     return RoadmapModel(

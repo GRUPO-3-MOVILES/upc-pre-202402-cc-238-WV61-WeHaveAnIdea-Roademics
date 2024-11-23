@@ -11,7 +11,16 @@ class Node {
     required this.description,
     required this.isStartNode,
     required this.isEndNode,
-  });
+  }) {
+    // Validaciones básicas
+    if (title.isEmpty) {
+      throw ArgumentError('El Node debe tener un título.');
+    }
+    if (description.isEmpty) {
+      throw ArgumentError('El Node debe tener una descripción.');
+    }
+  }
+
 
   factory Node.fromJson(Map<String, dynamic> json) {
     return Node(
