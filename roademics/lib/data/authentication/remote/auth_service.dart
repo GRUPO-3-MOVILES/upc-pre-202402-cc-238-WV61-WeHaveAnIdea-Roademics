@@ -1,34 +1,53 @@
 import 'dart:convert';
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
 import 'package:roademics/core/utils/constants/app_constants.dart';
-import 'package:roademics/core/utils/resources/generic_resource.dart';
-import 'package:roademics/data/authentication/remote/auth_request.dart';
-import 'package:roademics/data/authentication/remote/user_dto.dart';
+import 'package:roademics/domain/authentication/entities/auth_entity.dart';
 
 class AuthService {
-  Future<GenericResource<UserDto>> login(
-      {required String username, required String password}) async {
-    try {
-      http.Response response = await http.post(
-          Uri.parse('${AppConstants.baseUrl}${AppConstants.auth}/sign-in'),
-          headers: {'Content-Type': 'application/json'},
-          body: jsonEncode(
-              UserRequest(username: username, password: password).toMap()));
-      if (response.statusCode == HttpStatus.ok) {
-        final Map<String, dynamic> json = jsonDecode(response.body);
-        return Success(UserDto.fromJson(json));
-      } else {
-        return Error(response.statusCode.toString());
-      }
-    } catch (e) {
-      return Error('An exception has ocurred in auth service ${e.toString()}');
+  final String baseUrl = AppConstants.baseUrl;
+
+  // POST: Registro de usuario (sign-up)
+  Future<AuthUser> signUp(
+      String username, String password, List<String> roles) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/authentication/sign-up'),
+      headers: _headers,
+      body: json.encode({
+        'username': username,
+        'password': password,
+        'roles': roles,
+      }),
+    );
+
+    if (response.statusCode == 200 && response.body.isNotEmpty) {
+      return AuthUser.fromJson(json.decode(response.body));
+    } else {
+      throw HttpException(
+          'Error al registrar el usuario: ${response.reasonPhrase}');
     }
   }
 
-  void register({required String username, required String password}) {
-    http.post(Uri.parse('${AppConstants.baseUrl}${AppConstants.auth}/sign-up'),
-        headers: {'Content-Type': 'application/json'});
+  // POST: Inicio de sesión de usuario (sign-in)
+  Future<AuthUser> signIn(String username, String password) async {
+    final response = await http.post(
+      Uri.parse('$baseUrl/api/authentication/sign-in'),
+      headers: _headers,
+      body: json.encode({
+        'username': username,
+        'password': password,
+      }),
+    );
+
+    if (response.statusCode == 200 && response.body.isNotEmpty) {
+      return AuthUser.fromJson(json.decode(response.body));
+    } else {
+      throw HttpException('Error al iniciar sesión: ${response.reasonPhrase}');
+    }
   }
+
+  // Encabezados comunes para tipo de contenido JSON
+  Map<String, String> get _headers => {
+        'Content-Type': 'application/json',
+      };
 }

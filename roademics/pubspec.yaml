@@ -9,37 +9,30 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-    intl_phone_number_input: ^0.7.4
-    bloc: ^8.0.0
-    flutter_bloc: ^8.1.6
-    http: ^1.2.2
-    cached_network_image: ^3.4.1
-    cupertino_icons: ^1.0.8
-    infinite_scroll_pagination: ^4.0.0
-    flutter_bloc: ^8.1.6
-    logger: ^2.0.2+1
-    flutter_secure_storage: ^9.2.2
+  intl_phone_number_input: ^0.7.4
+  bloc: ^8.0.0
+  flutter_bloc: ^8.1.6
+  http: ^1.2.2
+  cached_network_image: ^3.4.1
+
+  cupertino_icons: ^1.0.8
 
 dev_dependencies:
-  flutter_test:0
+  flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
 
 flutter:
   uses-material-design: true
 
-  assets:
-    - assets/img/home.png
-    - assets/img/notifications.png
-    - assets/img/opportunities.png
-    - assets/img/profile.png
-    - assets/img/roadmaps.png
-    - assets/welcome_image.jpg
-    - assets/welcome_logo.png
   fonts:
     - family: Raleway
       fonts:
-        - asset: assets/fonts/Raleway-Italic-VariableFont_wght.ttf
         - asset: assets/fonts/Raleway-VariableFont_wght.ttf
-
-        
+      
+  assets:
+        - assets/img/home.png
+        - assets/img/notifications.png
+        - assets/img/opportunities.png
+        - assets/img/profile.png
+        - assets/img/roadmaps.png
