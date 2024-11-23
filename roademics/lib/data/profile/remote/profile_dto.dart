@@ -31,18 +31,18 @@ class ProfileDto {
 
   factory ProfileDto.fromJson(Map<String, dynamic> json) {
     return ProfileDto(
-      id: json['id'] as String,
-      firstName: json['firstName'] as String,
-      lastName: json['lastName'] as String,
-      city: json['city'] as String,
-      state: json['state'] as String,
-      country: json['country'] as String,
-      zipCode: json['zipCode'] as String,
-      phoneNumber: json['phoneNumber'] as String,
-      dateOfBirth: DateTime.parse(json['dateOfBirth'] as String),
-      email: json['email'] as String,
-      profileType: json['profileType'] as String,
-      biography: json['biography'] as String,
+      id: json['id'] ?? '',
+      firstName: json['firstName'] ?? '',
+      lastName: json['lastName'] ?? '',
+      city: json['city'] ?? '',
+      state: json['state'] ?? '',
+      country: json['country'] ?? '',
+      zipCode: json['zipCode'] ?? '',
+      phoneNumber: json['phoneNumber'] ?? '',
+      dateOfBirth: DateTime.parse(json['dateOfBirth'] ?? ''),
+      email: json['email'] ?? '',
+      profileType: json['profileType'] ?? '',
+      biography: json['biography'] ?? '',
     );
   }
 

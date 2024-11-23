@@ -1,98 +1,105 @@
 import 'dart:convert';
-import 'dart:io';
-import 'package:http/http.dart' as http;
+
 import 'package:roademics/core/utils/constants/app_constants.dart';
-import 'package:roademics/data/roadmaps/remote/roadmaps_model.dart';
+import 'package:roademics/core/utils/resources/generic_resource.dart';
+import 'package:roademics/data/roadmaps/remote/roadmap_dto.dart';
+import 'package:roademics/shared/domain/token_storage.dart';
+import 'dart:developer' as developer;
+import 'package:http/http.dart' as http;
 
 class RoadmapsService {
-  final String baseUrl = AppConstants.baseUrl;
-  final String? token; // Token de autenticación opcional
+  final String url =
+      Uri.parse('${AppConstants.baseUrl}${AppConstants.roadmaps}').toString();
 
-  RoadmapsService({this.token});
+  Future<GenericResource<RoadmapDto>> createRoadmap({
+    required String ownerId,
+    required String title,
+    required String description,
+    required String aiInteractionId,
+  }) async {
+    try {
+      developer.log("RoadmapsService: Sending request to create roadmap");
 
-  // Método auxiliar para manejo de errores HTTP
-  void _handleHttpError(http.Response response, String action) {
-    throw HttpException(
-        'Error al $action: ${response.reasonPhrase} (Status: ${response.statusCode})');
-  }
+      final String? token = await TokenStorage.getToken();
 
-  // GET: Obtener un roadmap por ID
-  Future<RoadmapModel?> getRoadmapById(String roadmapId) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl${AppConstants.roadmaps}/$roadmapId'),
-      headers: _headers,
-    );
-    if (response.statusCode == 200 && response.body.isNotEmpty) {
-      return RoadmapModel.fromJson(json.decode(response.body)); // Devuelve RoadmapModel
-    } else {
-      _handleHttpError(response, 'obtener el roadmap');
-    }
-    return null; // Agregar este retorno para cubrir todos los caminos
-  }
+      if (token == null) {
+        developer.log("RoadmapsService: No token found for roadmap creation.");
+        return const Error('Authorization token is missing');
+      }
 
-  // GET: Obtener roadmaps por UserID
-  Future<List<RoadmapModel>> getRoadmapsByUserId(String userId) async {
-    final response = await http.get(
-      Uri.parse('$baseUrl${AppConstants.roadmaps}/user/$userId'),
-      headers: _headers,
-    );
-    if (response.statusCode == 200 && response.body.isNotEmpty) {
-      final List<dynamic> data = json.decode(response.body);
-      return data.map((item) => RoadmapModel.fromJson(item)).toList(); // Devuelve List<RoadmapModel>
-    } else {
-      _handleHttpError(response, 'obtener los roadmaps por UserID');
-    }
-    return []; // Agregar este retorno para listas vacías en caso de error
-  }
+      http.Response response = await http.post(
+        Uri.parse('$url/create'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        body: jsonEncode({
+          'ownerId': ownerId,
+          'title': title,
+          'description': description,
+          'aiInteractionId': aiInteractionId,
+        }),
+      );
 
-  // POST: Crear un nuevo roadmap (debe recibir RoadmapModel desde el repositorio)
-  Future<RoadmapModel> createRoadmap(RoadmapModel roadmapModel) async {
-    final response = await http.post(
-      Uri.parse('$baseUrl${AppConstants.roadmaps}/create'),
-      headers: _headers,
-      body: jsonEncode(roadmapModel.toJson()), // Usa toJson de RoadmapModel
-    );
+      developer.log("RoadmapsService: Response Body: ${response.body}");
+      developer
+          .log("RoadmapsService: Response Status Code: ${response.statusCode}");
 
-    if (response.statusCode == 200) {
-      return RoadmapModel.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Error al crear el roadmap');
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        developer.log("RoadmapsService: Roadmap with name $title successfully");
+        return Success(RoadmapDto.fromJson(jsonDecode(response.body)));
+      } else {
+        developer.log(
+            "RoadmapsService: Roadmap with name $title creation failed. Response: ${response.body}");
+        return const Error('Failed to create roadmap');
+      }
+    } catch (e) {
+      developer.log(
+          "RoadmapsService: Error occurred during roadmap creation. Error: $e");
+      return Error('An error occurred: $e');
     }
   }
 
-  // PUT: Actualizar un roadmap existente (debe recibir RoadmapModel desde el repositorio)
-  Future<void> updateRoadmap(String roadmapId, RoadmapModel roadmapModel) async {
-    final response = await http.put(
-      Uri.parse('$baseUrl${AppConstants.roadmaps}/update'),
-      headers: _headers,
-      body: jsonEncode(roadmapModel.toJson()), // Usa toJson de RoadmapModel
-    );
-    if (response.statusCode != 200) {
-      _handleHttpError(response, 'actualizar el roadmap');
+  Future<GenericResource<List<RoadmapDto>>> getAllRoadmapsByUserId(
+      String userId) async {
+    try {
+      developer
+          .log("RoadmapsService: Sending request to retrieve all roadmaps");
+
+      final String? token = await TokenStorage.getToken();
+
+      if (token == null) {
+        developer.log("RoadmapsService: No token found for roadmap retrieval.");
+        return const Error('Authorization token is missing');
+      }
+
+      http.Response response = await http.get(
+        Uri.parse('$url/user/$userId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      );
+
+      developer.log("RoadmapsService: Response Body: ${response.body}");
+      developer
+          .log("RoadmapsService: Response Status Code: ${response.statusCode}");
+
+      if (response.statusCode == 200) {
+        developer.log("RoadmapsService: All roadmaps retrieved successfully");
+        List<dynamic> body = jsonDecode(response.body);
+        List<RoadmapDto> roadmaps =
+            body.map((item) => RoadmapDto.fromJson(item)).toList();
+        return Success(roadmaps);
+      } else {
+        developer.log(
+            "RoadmapsService: Roadmaps retrieval failed. Response: ${response.body}");
+        return const Error('Failed to load roadmaps');
+      }
+    } catch (e) {
+      developer.log(
+          "RoadmapsService: Error occurred during roadmaps retrieval. Error: $e");
+      return Error('An error occurred: $e');
     }
   }
-
-  // DELETE: Eliminar un roadmap por ID
-  Future<void> deleteRoadmap(String roadmapId) async {
-    final response = await http.delete(
-      Uri.parse('$baseUrl${AppConstants.roadmaps}/$roadmapId'),
-      headers: _headers,
-    );
-    if (response.statusCode != 200) {
-      _handleHttpError(response, 'eliminar el roadmap');
-    }
-  }
-
-  // Encabezados comunes para autenticación y tipo de contenido
-  Map<String, String> get _headers {
-    final headers = <String, String>{
-      'Content-Type': 'application/json',
-    };
-    if (token != null) {
-      headers['Authorization'] = 'Bearer $token';
-    }
-    return headers;
-  }
-
-
 }

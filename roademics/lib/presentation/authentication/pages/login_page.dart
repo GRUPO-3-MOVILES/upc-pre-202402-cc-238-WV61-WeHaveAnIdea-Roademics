@@ -6,8 +6,10 @@ import 'package:roademics/presentation/authentication/bloc/login_state.dart';
 import 'package:roademics/presentation/profile/bloc/profile_bloc.dart';
 import 'package:roademics/presentation/registration/bloc/signup_bloc.dart';
 import 'package:roademics/presentation/registration/pages/sign_up_flow.dart';
+import 'package:roademics/shared/domain/token_storage.dart';
 import 'package:roademics/shared/presentation/bloc/password_hudden_cubit.dart';
 import 'package:roademics/shared/presentation/pages/home_page.dart';
+import 'dart:developer' as developer;
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -62,7 +64,7 @@ class _LoginPageState extends State<LoginPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     const Text(
-                      "Roademics",
+                      "Welcome back!",
                       style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.bold,
@@ -73,7 +75,7 @@ class _LoginPageState extends State<LoginPage> {
                     TextField(
                       controller: _usernameController,
                       decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.email, color: Colors.white),
+                        prefixIcon: Icon(Icons.person, color: Colors.white),
                         enabledBorder: UnderlineInputBorder(
                           borderSide:
                               BorderSide(color: Colors.white, width: 1.5),
@@ -82,7 +84,7 @@ class _LoginPageState extends State<LoginPage> {
                           borderSide:
                               BorderSide(color: Colors.white, width: 2.0),
                         ),
-                        labelText: 'Email',
+                        labelText: 'Username',
                         labelStyle: TextStyle(
                             color: Colors.white, fontWeight: FontWeight.bold),
                       ),
@@ -138,7 +140,7 @@ class _LoginPageState extends State<LoginPage> {
                             borderRadius: BorderRadius.circular(12.0),
                           ),
                         ),
-                        onPressed: () {
+                        onPressed: () async {
                           final String username = _usernameController.text;
                           final String password = _passwordController.text;
                           context.read<LoginBloc>().add(

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roademics/data/profile/remote/profile_request.dart';
 import 'package:roademics/data/registration/remote/regis_request.dart';
+import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
+import 'package:roademics/presentation/authentication/bloc/login_event.dart';
+import 'package:roademics/presentation/authentication/bloc/login_state.dart';
 import 'package:roademics/presentation/profile/bloc/profile_bloc.dart';
 import 'package:roademics/presentation/profile/bloc/profile_event.dart';
 import 'package:roademics/presentation/profile/bloc/profile_state.dart';
@@ -98,6 +101,7 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
   void _completeSignUp() {
     final signupBloc = context.read<SignupBloc>();
     final profileBloc = context.read<ProfileBloc>();
+    final loginBloc = context.read<LoginBloc>();
 
     final RegistrationRequest registrationRequest = RegistrationRequest(
       username: _usernameController.text,
@@ -113,13 +117,18 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
       email: _emailController.text,
       firstName: _firstNameController.text,
       lastName: _lastNameController.text,
-      dateOfBirth: _dateOfBirth,
+      dateOfBirth: DateTime.parse(_dateOfBirth.toString()),
       biography: _biographyController.text,
       profileType: _selectedProfileType!,
     );
 
     developer.log(
         "SignUpFlowPage: Registering user: ${registrationRequest.username}");
+
+    signupBloc.add(SignupSubmitted(
+      username: registrationRequest.username,
+      password: registrationRequest.password,
+    ));
 
     signupBloc.stream.listen((signupState) async {
       if (signupState is SignupSuccess) {
@@ -141,44 +150,55 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
           biography: profileRequest.biography,
           profileType: profileRequest.profileType,
         ));
-      }
 
-      if (signupState is SignupError) {
+        profileBloc.stream.listen((profileState) {
+          if (profileState is ProfileSuccess) {
+            developer.log(
+                "SignUpFlowPage: Profile created successfully for user: ${signupState.user.username}");
+
+            // Perform login after successful profile creation
+            loginBloc.add(LoginSubmitted(
+              username: registrationRequest.username,
+              password: registrationRequest.password,
+            ));
+
+            loginBloc.stream.listen((loginState) {
+              if (loginState is LoginSuccess) {
+                developer.log(
+                    "SignUpFlowPage: User logged in successfully: ${loginState.user.username} with this token: ${loginState.user.token}");
+
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HomePage(),
+                  ),
+                );
+              } else if (loginState is LoginError) {
+                developer
+                    .log("SignUpFlowPage: Login failed: ${loginState.message}");
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(loginState.message)),
+                );
+              }
+            });
+          } else if (profileState is ProfileError) {
+            developer.log(
+                "SignUpFlowPage: Profile creation failed: ${profileState.message}");
+            if (mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(profileState.message)),
+              );
+            }
+          }
+        });
+      } else if (signupState is SignupError) {
         developer.log(
             "SignUpFlowPage: User registration failed: ${signupState.message}");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(signupState.message)),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(signupState.message)),
+        );
       }
     });
-
-    profileBloc.stream.listen((profileState) {
-      if (profileState is ProfileSuccess) {
-        developer.log(
-            "SignUpFlowPage: Profile created successfully: ${profileState.profile}");
-        if (mounted) {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomePage()),
-          );
-        }
-      } else if (profileState is ProfileError) {
-        developer.log(
-            "SignUpFlowPage: Profile creation failed: ${profileState.message}");
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(profileState.message)),
-          );
-        }
-      }
-    });
-
-    signupBloc.add(SignupSubmitted(
-      username: registrationRequest.username,
-      password: registrationRequest.password,
-    ));
   }
 
   @override

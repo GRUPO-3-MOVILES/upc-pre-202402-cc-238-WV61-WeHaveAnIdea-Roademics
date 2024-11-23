@@ -21,7 +21,6 @@ class Node {
     }
   }
 
-
   factory Node.fromJson(Map<String, dynamic> json) {
     return Node(
       nodeId: json['nodeId'],
