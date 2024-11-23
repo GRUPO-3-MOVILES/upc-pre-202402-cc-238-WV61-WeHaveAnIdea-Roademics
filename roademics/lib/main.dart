@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:roademics/shared/components/login.dart';
+import 'package:roademics/shared/components/home_page.dart';
 //import 'package:proyecto_0/src/features/profiles/presentation/pages/edit_profile_page.dart';
 //import 'package:proyecto_0/src/features/profiles/presentation/pages/settings_page.dart';
 
@@ -17,10 +17,10 @@ class MyApp extends StatelessWidget {
       home: Scaffold(
         backgroundColor: Color(0xFFF0FFFF),
         body: Center(
-          child: Login(),
+          child: Home(),
         ),
       ),
-      home: HomePage(), // Invoca HomePage aquí
+      //home: Home(), // Invoca HomePage aquí.
     );
   }
 }
