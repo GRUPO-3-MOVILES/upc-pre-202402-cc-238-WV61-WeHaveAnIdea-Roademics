@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:roademics/presentation/profiles/pages/profile_page.dart';
 import 'package:roademics/shared/components/home_page.dart';
+import 'package:roademics/shared/components/notification_page.dart';
 import 'package:roademics/shared/components/roadmap_page.dart';
 
 class NavBar extends StatelessWidget {
@@ -37,7 +38,7 @@ class NavBar extends StatelessWidget {
               context,
               iconPath: 'assets/img/notifications.png',
               label: 'Notifications',
-              targetPage: null,
+              targetPage: const NotificationPage(),
             ),
             _buildBottomNavItem(
               context,

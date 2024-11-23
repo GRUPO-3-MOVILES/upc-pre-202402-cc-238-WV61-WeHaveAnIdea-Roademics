@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:roademics/shared/components/home_page.dart';
 import 'package:roademics/presentation/profiles/pages/profile_page.dart';
+import 'package:roademics/shared/components/notification_page.dart';
 
 class Roadmap extends StatefulWidget {
   const Roadmap({super.key});
@@ -139,7 +140,10 @@ class _RoadmapState extends State<Roadmap> {
               ),
               GestureDetector(
                 onTap: () {
-                  // Acción al presionar Notificaciones
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NotificationPage()),
+                  );
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,

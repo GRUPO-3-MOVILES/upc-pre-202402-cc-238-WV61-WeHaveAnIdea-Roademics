@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:math';
 import 'package:roademics/presentation/profiles/pages/profile_page.dart';
 import 'package:roademics/shared/components/roadmap_page.dart';
+import 'package:roademics/shared/components/notification_page.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,7 +18,7 @@ class _HomeState extends State<Home> {
   @override
   void initState() {
     super.initState();
-    _reactionCount = Random().nextInt(200); // Genera un número aleatorio entre 0 y 199
+    _reactionCount = Random().nextInt(200);
   }
   void _toggleLike() {
     setState(() {
@@ -605,7 +606,10 @@ class _HomeState extends State<Home> {
               ),
               GestureDetector(
                 onTap: () {
-                  // Acción al presionar Notificaciones
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const NotificationPage()),
+                  );
                 },
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
