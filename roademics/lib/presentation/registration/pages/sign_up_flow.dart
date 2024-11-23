@@ -189,451 +189,251 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
         BlocProvider(create: (_) => ProfileBloc()),
       ],
       child: Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF0A3D62), Color(0xFF40E0D0)],
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
-          child: SafeArea(
-            child: Column(
-              children: [
-                Expanded(
-                  child: PageView(
-                    controller: _pageController,
-                    physics: const NeverScrollableScrollPhysics(),
-                    children: [
-                      _buildAccountInfoPage(),
-                      _buildProfileTypePage(),
-                      _buildContactInfoPage(),
-                      _buildLocationInfoPage(),
-                      _buildBiographyPage(),
-                    ],
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        appBar: AppBar(
+          title: const Text("Roademics"),
+          centerTitle: true,
+        ),
+        body: SafeArea(
+          child: Column(
+            children: [
+              Expanded(
+                child: PageView(
+                  controller: _pageController,
+                  physics: const NeverScrollableScrollPhysics(),
                   children: [
-                    if (_currentPage > 0)
-                      TextButton(
-                        onPressed: _previousPage,
-                        child: const Text(
-                          'Anterior',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    if (_currentPage < 4)
-                      TextButton(
-                        onPressed: _nextPage,
-                        child: const Text(
-                          'Siguiente',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ),
-                    if (_currentPage == 4)
-                      ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(255, 9, 50, 75),
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
-                        onPressed: _completeSignUp,
-                        child: const Text(
-                          'Completar Registro',
-                          style: TextStyle(fontSize: 16, color: Colors.white),
-                        ),
-                      ),
+                    _buildAccountInfoPage(),
+                    _buildProfileTypePage(),
+                    _buildContactInfoPage(),
+                    _buildLocationInfoPage(),
+                    _buildBiographyPage(),
                   ],
                 ),
-              ],
-            ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  if (_currentPage > 0)
+                    TextButton(
+                      onPressed: _previousPage,
+                      child: const Text('Anterior'),
+                    ),
+                  if (_currentPage < 4)
+                    TextButton(
+                      onPressed: _nextPage,
+                      child: const Text('Siguiente'),
+                    ),
+                  if (_currentPage == 4)
+                    ElevatedButton(
+                      onPressed: _completeSignUp,
+                      child: const Text('Completar Registro'),
+                    ),
+                ],
+              ),
+            ],
           ),
-        ),
-      ),
-    );
-  }
-
-    Widget _buildProfileTypePage() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.5),
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Selecciona tu tipo de perfil",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 16),
-            ListTile(
-              title: const Text(
-                'EMPLOYER',
-                style: TextStyle(color: Colors.white),
-              ),
-              leading: Radio<String>(
-                value: 'EMPLOYER',
-                groupValue: _selectedProfileType,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedProfileType = value;
-                  });
-                },
-              ),
-            ),
-            ListTile(
-              title: const Text(
-                'PATHFINDER',
-                style: TextStyle(color: Colors.white),
-              ),
-              leading: Radio<String>(
-                value: 'PATHFINDER',
-                groupValue: _selectedProfileType,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedProfileType = value;
-                  });
-                },
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildContactInfoPage() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.5),
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Información de Contacto",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _firstNameController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person, color: Colors.white),
-                labelText: 'Nombre',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _lastNameController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person, color: Colors.white),
-                labelText: 'Apellido',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _phoneNumberController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.phone, color: Colors.white),
-                labelText: 'Teléfono',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.email, color: Colors.white),
-                labelText: 'E-mail',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLocationInfoPage() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.5),
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Información de Ubicación",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _cityController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.location_city, color: Colors.white),
-                labelText: 'Ciudad',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _stateController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.location_on, color: Colors.white),
-                labelText: 'Estado',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _countryController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.flag, color: Colors.white),
-                labelText: 'País',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBiographyPage() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.5),
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Biografía",
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _biographyController,
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.description, color: Colors.white),
-                labelText: 'Cuéntanos sobre ti',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-              ),
-              maxLines: 4,
-              style: const TextStyle(color: Colors.white),
-            ),
-          ],
         ),
       ),
     );
   }
 
   Widget _buildAccountInfoPage() {
-    return Center(
-      child: Container(
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.symmetric(horizontal: 24.0),
-        decoration: BoxDecoration(
-          color: Colors.white.withOpacity(0.2),
-          borderRadius: BorderRadius.circular(16.0),
-          border: Border.all(
-            color: Colors.white.withOpacity(0.5),
-            width: 1.5,
-          ),
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            const Text(
-              "Información de Cuenta",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            TextField(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Información de Cuenta",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          TextField(
               controller: _usernameController,
               decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.person, color: Colors.white),
-                labelText: 'Username',
-                labelStyle: TextStyle(color: Colors.white),
-                enabledBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
+                  labelText: 'Username', prefixIcon: Icon(Icons.person_add))),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _passwordController,
+            obscureText: _isPasswordHidden,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.lock),
+              labelText: 'Contraseña',
+              errorText: _passwordError,
+              suffixIcon: IconButton(
+                icon: Icon(_isPasswordHidden
+                    ? Icons.visibility_off
+                    : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordHidden = !_isPasswordHidden;
+                  });
+                },
               ),
-              style: const TextStyle(color: Colors.white),
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _passwordController,
-              obscureText: _isPasswordHidden,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                labelText: 'Contraseña',
-                labelStyle: const TextStyle(color: Colors.white),
-                enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-                errorText: _passwordError,
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isPasswordHidden ? Icons.visibility_off : Icons.visibility,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isPasswordHidden = !_isPasswordHidden;
-                    });
-                  },
-                ),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _confirmPasswordController,
+            obscureText: _isConfirmPasswordHidden,
+            decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.lock),
+              labelText: 'Confirmación de Contraseña',
+              errorText: _passwordError,
+              suffixIcon: IconButton(
+                icon: Icon(_isConfirmPasswordHidden
+                    ? Icons.visibility_off
+                    : Icons.visibility),
+                onPressed: () {
+                  setState(() {
+                    _isConfirmPasswordHidden = !_isConfirmPasswordHidden;
+                  });
+                },
               ),
-              style: const TextStyle(color: Colors.white),
             ),
-            const SizedBox(height: 16),
-            TextField(
-              controller: _confirmPasswordController,
-              obscureText: _isConfirmPasswordHidden,
-              decoration: InputDecoration(
-                prefixIcon: const Icon(Icons.lock, color: Colors.white),
-                labelText: 'Confirmar Contraseña',
-                labelStyle: const TextStyle(color: Colors.white),
-                enabledBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
-                ),
-                focusedBorder: const UnderlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white, width: 2),
-                ),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _isConfirmPasswordHidden
-                        ? Icons.visibility_off
-                        : Icons.visibility,
-                    color: Colors.white,
-                  ),
-                  onPressed: () {
-                    setState(() {
-                      _isConfirmPasswordHidden = !_isConfirmPasswordHidden;
-                    });
-                  },
-                ),
-              ),
-              style: const TextStyle(color: Colors.white),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildProfileTypePage() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Selecciona tu tipo de perfil",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          ListTile(
+            title: const Text('EMPLOYER'),
+            leading: Radio<String>(
+              value: 'EMPLOYER',
+              groupValue: _selectedProfileType,
+              onChanged: (value) {
+                setState(() {
+                  _selectedProfileType = value;
+                });
+              },
             ),
-          ],
-        ),
+          ),
+          ListTile(
+            title: const Text('PATHFINDER'),
+            leading: Radio<String>(
+              value: 'PATHFINDER',
+              groupValue: _selectedProfileType,
+              onChanged: (value) {
+                setState(() {
+                  _selectedProfileType = value;
+                });
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLocationInfoPage() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Información de Ubicación",
+              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _cityController,
+            decoration: const InputDecoration(
+                labelText: 'Ciudad', prefixIcon: Icon(Icons.location_city)),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _stateController,
+            decoration: const InputDecoration(
+                labelText: 'Provincia/Estado',
+                prefixIcon: Icon(Icons.location_city_outlined)),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _countryController,
+            decoration: const InputDecoration(
+                labelText: 'País',
+                prefixIcon: Icon(Icons.location_city_rounded)),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _zipCodeController,
+            decoration: const InputDecoration(
+                labelText: 'Código Postal',
+                prefixIcon: Icon(Icons.location_city_sharp)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactInfoPage() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Información de Contacto",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _firstNameController,
+            decoration: const InputDecoration(
+                labelText: 'Nombre', prefixIcon: Icon(Icons.person)),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _lastNameController,
+            decoration: const InputDecoration(
+                labelText: 'Apellido', prefixIcon: Icon(Icons.person)),
+          ),
+          const SizedBox(height: 16),
+          TextField(
+            controller: _phoneNumberController,
+            decoration: const InputDecoration(
+                labelText: 'Teléfono', prefixIcon: Icon(Icons.phone)),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+                labelText: 'E-mail', prefixIcon: Icon(Icons.email)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBiographyPage() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Perfil",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          const Text("Cuéntanos un poco sobre ti para tu perfil."),
+          const SizedBox(height: 8),
+          TextField(
+            controller: _biographyController,
+            decoration: const InputDecoration(
+              labelText: 'Biografía',
+              hintText: 'Ej: Me gusta la tecnología y la educación...',
+              prefixIcon: Icon(Icons.coffee),
+            ),
+            maxLines: 5,
+          ),
+        ],
       ),
     );
   }
