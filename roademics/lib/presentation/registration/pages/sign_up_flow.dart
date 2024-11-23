@@ -1,30 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:roademics/data/profile/remote/profile_request.dart';
-import 'package:roademics/data/registration/remote/regis_request.dart';
-import 'package:roademics/presentation/ai_interaction/bloc/sendprompt_bloc.dart';
-import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
-import 'package:roademics/presentation/authentication/bloc/login_event.dart';
-import 'package:roademics/presentation/authentication/bloc/login_state.dart';
 import 'package:roademics/presentation/profile/bloc/profile_bloc.dart';
 import 'package:roademics/presentation/profile/bloc/profile_event.dart';
-import 'package:roademics/presentation/profile/bloc/profile_state.dart';
 import 'package:roademics/presentation/registration/bloc/signup_bloc.dart';
 import 'package:roademics/presentation/registration/bloc/signup_event.dart';
 import 'package:roademics/presentation/registration/bloc/signup_state.dart';
-import 'package:roademics/presentation/roadmaps/bloc/get_bloc/get_roadmaps_bloc.dart';
-import 'package:roademics/presentation/roadmaps/bloc/post_bloc/create_roadmap_bloc.dart';
-import 'package:roademics/shared/presentation/pages/home_page.dart';
-import 'dart:developer' as developer;
+import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
+import 'package:roademics/shared/presentation/widgets/loading_widget.dart';
 
 class SignUpFlowPage extends StatefulWidget {
   const SignUpFlowPage({Key? key}) : super(key: key);
 
   @override
-  SignUpFlowPageState createState() => SignUpFlowPageState();
+  State<SignUpFlowPage> createState() => _SignUpFlowPageState();
 }
 
-class SignUpFlowPageState extends State<SignUpFlowPage> {
+class _SignUpFlowPageState extends State<SignUpFlowPage> {
   final PageController _pageController = PageController();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -40,12 +31,9 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _biographyController = TextEditingController();
 
-  final DateTime _dateOfBirth = DateTime.now();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  DateTime _dateOfBirth = DateTime.now();
   int _currentPage = 0;
-  bool _isPasswordHidden = true;
-  bool _isConfirmPasswordHidden = true;
-  String? _passwordError;
-
   String? _selectedProfileType;
 
   @override
@@ -67,23 +55,13 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
 
   void _nextPage() {
     if (_currentPage < 4) {
-      if (_currentPage == 0 &&
-          _passwordController.text != _confirmPasswordController.text) {
-        setState(() {
-          _passwordError = 'Las contraseñas no coinciden';
-        });
-      } else if (_currentPage == 1 && _selectedProfileType == null) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Debe seleccionar un tipo de perfil')),
-        );
-      } else {
+      if (_formKey.currentState?.validate() ?? false) {
         _pageController.nextPage(
           duration: const Duration(milliseconds: 300),
           curve: Curves.easeInOut,
         );
         setState(() {
           _currentPage++;
-          _passwordError = null;
         });
       }
     }
@@ -102,119 +80,14 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
   }
 
   void _completeSignUp() {
-    final signupBloc = context.read<SignupBloc>();
-    final profileBloc = context.read<ProfileBloc>();
-    final loginBloc = context.read<LoginBloc>();
-
-    final RegistrationRequest registrationRequest = RegistrationRequest(
-      username: _usernameController.text,
-      password: _passwordController.text,
-    );
-
-    final ProfileRequest profileRequest = ProfileRequest(
-      city: _cityController.text,
-      state: _stateController.text,
-      country: _countryController.text,
-      zipCode: _zipCodeController.text,
-      phoneNumber: _phoneNumberController.text,
-      email: _emailController.text,
-      firstName: _firstNameController.text,
-      lastName: _lastNameController.text,
-      dateOfBirth: DateTime.parse(_dateOfBirth.toString()),
-      biography: _biographyController.text,
-      profileType: _selectedProfileType!,
-    );
-
-    developer.log(
-        "SignUpFlowPage: Registering user: ${registrationRequest.username}");
-
-    signupBloc.add(SignupSubmitted(
-      username: registrationRequest.username,
-      password: registrationRequest.password,
-    ));
-
-    signupBloc.stream.listen((signupState) async {
-      if (signupState is SignupSuccess) {
-        developer.log(
-            "SignUpFlowPage: User registered successfully: ${signupState.user.username}");
-
-        developer.log(
-            "SignUpFlowPage: Starting profile creation for user: ${signupState.user.username}");
-        profileBloc.add(CreateProfile(
-          city: profileRequest.city,
-          state: profileRequest.state,
-          country: profileRequest.country,
-          zipCode: profileRequest.zipCode,
-          phoneNumber: profileRequest.phoneNumber,
-          email: profileRequest.email,
-          firstName: profileRequest.firstName,
-          lastName: profileRequest.lastName,
-          dateOfBirth: profileRequest.dateOfBirth,
-          biography: profileRequest.biography,
-          profileType: profileRequest.profileType,
-        ));
-
-        profileBloc.stream.listen((profileState) {
-          if (profileState is ProfileSuccess) {
-            developer.log(
-                "SignUpFlowPage: Profile created successfully for user: ${signupState.user.username}");
-
-            // Perform login after successful profile creation
-            loginBloc.add(LoginSubmitted(
-              username: registrationRequest.username,
-              password: registrationRequest.password,
-            ));
-
-            loginBloc.stream.listen((loginState) {
-              if (loginState is LoginSuccess) {
-                developer.log(
-                    "SignUpFlowPage: User logged in successfully: ${loginState.user.username} with this token: ${loginState.user.token}");
-
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => MultiBlocProvider(
-                      providers: [
-                        BlocProvider<GetRoadmapsBloc>(
-                          create: (_) => GetRoadmapsBloc(),
-                        ),
-                        BlocProvider<SendPromptBloc>(
-                          create: (_) => SendPromptBloc(),
-                        ),
-                        BlocProvider<CreateRoadmapBloc>(
-                          create: (_) => CreateRoadmapBloc(),
-                        ),
-                      ],
-                      child: HomePage(userId: loginState.user.id),
-                    ),
-                  ),
-                );
-              } else if (loginState is LoginError) {
-                developer
-                    .log("SignUpFlowPage: Login failed: ${loginState.message}");
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text(loginState.message)),
-                );
-              }
-            });
-          } else if (profileState is ProfileError) {
-            developer.log(
-                "SignUpFlowPage: Profile creation failed: ${profileState.message}");
-            if (mounted) {
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text(profileState.message)),
-              );
-            }
-          }
-        });
-      } else if (signupState is SignupError) {
-        developer.log(
-            "SignUpFlowPage: User registration failed: ${signupState.message}");
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(signupState.message)),
-        );
-      }
-    });
+    if (_formKey.currentState?.validate() ?? false) {
+      context.read<SignupBloc>().add(
+            SignupSubmitted(
+              username: _usernameController.text,
+              password: _passwordController.text,
+            ),
+          );
+    }
   }
 
   @override
@@ -223,6 +96,7 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
       providers: [
         BlocProvider(create: (_) => SignupBloc()),
         BlocProvider(create: (_) => ProfileBloc()),
+        BlocProvider(create: (_) => LoginBloc()),
       ],
       child: Scaffold(
         appBar: AppBar(
@@ -230,42 +104,76 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
           centerTitle: true,
         ),
         body: SafeArea(
-          child: Column(
-            children: [
-              Expanded(
-                child: PageView(
-                  controller: _pageController,
-                  physics: const NeverScrollableScrollPhysics(),
+          child: BlocConsumer<SignupBloc, SignupState>(
+            listener: (context, signupState) {
+              if (signupState is SignupSuccess) {
+                context.read<ProfileBloc>().add(
+                      CreateProfile(
+                        city: _cityController.text,
+                        state: _stateController.text,
+                        country: _countryController.text,
+                        zipCode: _zipCodeController.text,
+                        phoneNumber: _phoneNumberController.text,
+                        email: _emailController.text,
+                        firstName: _firstNameController.text,
+                        lastName: _lastNameController.text,
+                        dateOfBirth: _dateOfBirth,
+                        biography: _biographyController.text,
+                        profileType: _selectedProfileType!,
+                      ),
+                    );
+              } else if (signupState is SignupError) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text(signupState.message)),
+                );
+              }
+            },
+            builder: (context, signupState) {
+              if (signupState is SignupLoading) {
+                return const LoadingWidget();
+              }
+
+              return Form(
+                key: _formKey,
+                child: Column(
                   children: [
-                    _buildAccountInfoPage(),
-                    _buildProfileTypePage(),
-                    _buildContactInfoPage(),
-                    _buildLocationInfoPage(),
-                    _buildBiographyPage(),
+                    Expanded(
+                      child: PageView(
+                        controller: _pageController,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          _buildAccountInfoPage(),
+                          _buildProfileTypePage(),
+                          _buildContactInfoPage(),
+                          _buildLocationInfoPage(),
+                          _buildBiographyPage(),
+                        ],
+                      ),
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        if (_currentPage > 0)
+                          TextButton(
+                            onPressed: _previousPage,
+                            child: const Text('Anterior'),
+                          ),
+                        if (_currentPage < 4)
+                          TextButton(
+                            onPressed: _nextPage,
+                            child: const Text('Siguiente'),
+                          ),
+                        if (_currentPage == 4)
+                          ElevatedButton(
+                            onPressed: _completeSignUp,
+                            child: const Text('Completar Registro'),
+                          ),
+                      ],
+                    ),
                   ],
                 ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  if (_currentPage > 0)
-                    TextButton(
-                      onPressed: _previousPage,
-                      child: const Text('Anterior'),
-                    ),
-                  if (_currentPage < 4)
-                    TextButton(
-                      onPressed: _nextPage,
-                      child: const Text('Siguiente'),
-                    ),
-                  if (_currentPage == 4)
-                    ElevatedButton(
-                      onPressed: _completeSignUp,
-                      child: const Text('Completar Registro'),
-                    ),
-                ],
-              ),
-            ],
+              );
+            },
           ),
         ),
       ),
@@ -278,52 +186,53 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("Información de Cuenta",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const Text(
+            "Información de Cuenta",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
-          TextField(
-              controller: _usernameController,
-              decoration: const InputDecoration(
-                  labelText: 'Username', prefixIcon: Icon(Icons.person_add))),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _passwordController,
-            obscureText: _isPasswordHidden,
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.lock),
-              labelText: 'Contraseña',
-              errorText: _passwordError,
-              suffixIcon: IconButton(
-                icon: Icon(_isPasswordHidden
-                    ? Icons.visibility_off
-                    : Icons.visibility),
-                onPressed: () {
-                  setState(() {
-                    _isPasswordHidden = !_isPasswordHidden;
-                  });
-                },
-              ),
+          TextFormField(
+            controller: _usernameController,
+            decoration: const InputDecoration(
+              labelText: 'Username',
+              prefixIcon: Icon(Icons.person),
             ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'El nombre de usuario es obligatorio';
+              }
+              return null;
+            },
           ),
           const SizedBox(height: 8),
-          TextField(
-            controller: _confirmPasswordController,
-            obscureText: _isConfirmPasswordHidden,
-            decoration: InputDecoration(
-              prefixIcon: const Icon(Icons.lock),
-              labelText: 'Confirmación de Contraseña',
-              errorText: _passwordError,
-              suffixIcon: IconButton(
-                icon: Icon(_isConfirmPasswordHidden
-                    ? Icons.visibility_off
-                    : Icons.visibility),
-                onPressed: () {
-                  setState(() {
-                    _isConfirmPasswordHidden = !_isConfirmPasswordHidden;
-                  });
-                },
-              ),
+          TextFormField(
+            controller: _passwordController,
+            decoration: const InputDecoration(
+              labelText: 'Contraseña',
+              prefixIcon: Icon(Icons.lock),
             ),
+            obscureText: true,
+            validator: (value) {
+              if (value == null || value.length < 6) {
+                return 'La contraseña debe tener al menos 6 caracteres';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _confirmPasswordController,
+            decoration: const InputDecoration(
+              labelText: 'Confirmar Contraseña',
+              prefixIcon: Icon(Icons.lock),
+            ),
+            obscureText: true,
+            validator: (value) {
+              if (value != _passwordController.text) {
+                return 'Las contraseñas no coinciden';
+              }
+              return null;
+            },
           ),
         ],
       ),
@@ -336,8 +245,10 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Text("Selecciona tu tipo de perfil",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold)),
+          const Text(
+            "Selecciona tu tipo de perfil",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
           const SizedBox(height: 16),
           ListTile(
             title: const Text('EMPLOYER'),
@@ -361,6 +272,51 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
                   _selectedProfileType = value;
                 });
               },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildContactInfoPage() {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text(
+            "Información de Contacto",
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 16),
+          TextFormField(
+            controller: _firstNameController,
+            decoration: const InputDecoration(
+              labelText: 'Nombre',
+              prefixIcon: Icon(Icons.person),
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'El nombre es obligatorio';
+              }
+              return null;
+            },
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _lastNameController,
+            decoration: const InputDecoration(
+              labelText: 'Apellido',
+              prefixIcon: Icon(Icons.person),
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: _emailController,
+            decoration: const InputDecoration(
+              labelText: 'Email',
+              prefixIcon: Icon(Icons.email),
             ),
           ),
         ],
@@ -402,45 +358,6 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
             decoration: const InputDecoration(
                 labelText: 'Código Postal',
                 prefixIcon: Icon(Icons.location_city_sharp)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildContactInfoPage() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const Text(
-            "Información de Contacto",
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _firstNameController,
-            decoration: const InputDecoration(
-                labelText: 'Nombre', prefixIcon: Icon(Icons.person)),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _lastNameController,
-            decoration: const InputDecoration(
-                labelText: 'Apellido', prefixIcon: Icon(Icons.person)),
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _phoneNumberController,
-            decoration: const InputDecoration(
-                labelText: 'Teléfono', prefixIcon: Icon(Icons.phone)),
-          ),
-          const SizedBox(height: 8),
-          TextField(
-            controller: _emailController,
-            decoration: const InputDecoration(
-                labelText: 'E-mail', prefixIcon: Icon(Icons.email)),
           ),
         ],
       ),

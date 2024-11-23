@@ -11,7 +11,7 @@ class SendPromptBloc extends Bloc<SendPromptEvent, SendPromptState> {
       emit(const SendPromptLoading());
 
       GenericResource<AIInteraction> result =
-          (await AIRepository().SendPrompt(prompt: event.prompt));
+          (await AIRepository().sendPrompt(prompt: event.prompt));
 
       if (result is Success) {
         emit(SendPromptSuccess(aiInteraction: result.data!));

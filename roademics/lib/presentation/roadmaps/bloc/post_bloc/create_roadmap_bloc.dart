@@ -10,13 +10,12 @@ class CreateRoadmapBloc extends Bloc<CreateRoadmapEvent, CreateRoadmapState> {
     on<RoadmapSubmitted>((event, emit) async {
       emit(const CreateRoadmapLoading());
 
-      GenericResource<Roadmap> result =
-          (await RoadmapRepository().createRoadmap(
+      GenericResource<Roadmap> result = await RoadmapRepository().createRoadmap(
         ownerId: event.ownerId,
         title: event.title,
         description: event.description,
         aiInteractionId: event.aiInteractionId,
-      ));
+      );
 
       if (result is Success) {
         emit(CreateRoadmapSuccess(roadmap: result.data!));

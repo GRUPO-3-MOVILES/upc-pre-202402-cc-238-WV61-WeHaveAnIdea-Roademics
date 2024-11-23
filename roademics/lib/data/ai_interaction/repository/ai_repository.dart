@@ -6,9 +6,9 @@ import 'package:roademics/domain/ai_interaction/entities/ai_interaction.dart';
 class AIRepository {
   final AiService _aiService = AiService();
 
-  Future<GenericResource<AIInteraction>> SendPrompt(
+  Future<GenericResource<AIInteraction>> sendPrompt(
       {required String prompt}) async {
-    GenericResource<AiDto> result = await _aiService.SendPrompt(prompt: prompt);
+    GenericResource<AiDto> result = await _aiService.sendPrompt(prompt: prompt);
 
     if (result is Success) {
       return Success(result.data!.toAIInteraction());

@@ -155,13 +155,13 @@ class ProfileService {
           .log("ProfileService: Sending profile update request for ID $id");
 
       http.Response response = await http.put(
-        Uri.parse('${AppConstants.baseUrl}${AppConstants.profiles}/$id'),
+        Uri.parse(
+            '${AppConstants.baseUrl}${AppConstants.profiles}/updateprofile/$id'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token,
         },
         body: jsonEncode({
-          'id': id,
           'city': city,
           'state': state,
           'country': country,
@@ -191,5 +191,31 @@ class ProfileService {
           "ProfileService: Error occurred during profile update for ID $id. Error: $e");
       return Error('An error occurred: $e');
     }
+  }
+}
+
+Future<GenericResource<ProfileDto>> fetchProfileByEmail(String email) async {
+  try {
+    final String? token = await TokenStorage.getToken();
+    if (token == null) {
+      return const Error('Authorization token is missing');
+    }
+
+    http.Response response = await http.get(
+      Uri.parse(
+          '${AppConstants.baseUrl}${AppConstants.profiles}/fetchbyprofile/$email'),
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      return Success(ProfileDto.fromJson(jsonDecode(response.body)));
+    } else {
+      return Error('Failed to fetch profile by email: ${response.body}');
+    }
+  } catch (e) {
+    return Error('An error occurred: $e');
   }
 }

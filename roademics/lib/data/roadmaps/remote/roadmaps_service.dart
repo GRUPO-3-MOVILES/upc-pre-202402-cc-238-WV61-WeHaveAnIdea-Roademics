@@ -11,6 +11,40 @@ class RoadmapsService {
   final String url =
       Uri.parse('${AppConstants.baseUrl}${AppConstants.roadmaps}').toString();
 
+  Future<GenericResource<RoadmapDto>> updateRoadmap({
+    required String id,
+    required String title,
+    required String description,
+  }) async {
+    try {
+      final String? token = await TokenStorage.getToken();
+      if (token == null) {
+        return const Error('Authorization token is missing');
+      }
+
+      http.Response response = await http.put(
+        Uri.parse('${AppConstants.baseUrl}${AppConstants.roadmaps}/update'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+        body: jsonEncode({
+          'id': id,
+          'title': title,
+          'description': description,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        return Success(RoadmapDto.fromJson(jsonDecode(response.body)));
+      } else {
+        return Error('Failed to update roadmap: ${response.body}');
+      }
+    } catch (e) {
+      return Error('An error occurred: $e');
+    }
+  }
+
   Future<GenericResource<RoadmapDto>> createRoadmap({
     required String ownerId,
     required String title,
@@ -74,7 +108,8 @@ class RoadmapsService {
       }
 
       http.Response response = await http.get(
-        Uri.parse('$url/user/$userId'),
+        Uri.parse(
+            '${AppConstants.baseUrl}${AppConstants.roadmaps}/user/$userId'),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': token,
@@ -99,6 +134,31 @@ class RoadmapsService {
     } catch (e) {
       developer.log(
           "RoadmapsService: Error occurred during roadmaps retrieval. Error: $e");
+      return Error('An error occurred: $e');
+    }
+  }
+
+  Future<GenericResource<RoadmapDto>> getRoadmapById(String roadmapId) async {
+    try {
+      final String? token = await TokenStorage.getToken();
+      if (token == null) {
+        return const Error('Authorization token is missing');
+      }
+
+      http.Response response = await http.get(
+        Uri.parse('${AppConstants.baseUrl}${AppConstants.roadmaps}/$roadmapId'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      );
+
+      if (response.statusCode == 200) {
+        return Success(RoadmapDto.fromJson(jsonDecode(response.body)));
+      } else {
+        return Error('Failed to fetch roadmap: ${response.body}');
+      }
+    } catch (e) {
       return Error('An error occurred: $e');
     }
   }

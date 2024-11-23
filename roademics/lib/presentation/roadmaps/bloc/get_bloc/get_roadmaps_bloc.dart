@@ -11,7 +11,7 @@ class GetRoadmapsBloc extends Bloc<GetRoadmapsEvent, GetRoadmapsState> {
       emit(const GetRoadmapsLoading());
 
       GenericResource<List<Roadmap>> result =
-          (await RoadmapRepository().getAllRoadmapsByUserId(event.ownerId));
+          await RoadmapRepository().getAllRoadmapsByUserId(event.ownerId);
 
       if (result is Success) {
         emit(GetRoadmapsSuccess(roadmaps: result.data!));

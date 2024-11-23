@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
                   Navigator.pushReplacementNamed(
                     context,
                     '/home',
-                    arguments: state.user.id,
+                    arguments: {'key': UniqueKey(), 'userId': state.user.id},
                   );
                 } else if (state is LoginError) {
                   ScaffoldMessenger.of(context).showSnackBar(
