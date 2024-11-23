@@ -3,13 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_event.dart';
 import 'package:roademics/presentation/authentication/bloc/login_state.dart';
-import 'package:roademics/presentation/profile/bloc/profile_bloc.dart';
-import 'package:roademics/presentation/registration/bloc/signup_bloc.dart';
-import 'package:roademics/presentation/registration/pages/sign_up_flow.dart';
-import 'package:roademics/shared/domain/token_storage.dart';
 import 'package:roademics/shared/presentation/bloc/password_hudden_cubit.dart';
-import 'package:roademics/shared/presentation/pages/home_page.dart';
-import 'dart:developer' as developer;
+import 'package:roademics/shared/presentation/widgets/custom_background.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,36 +20,27 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return BlocProvider<PasswordHiddenCubit>(
-      create: (context) => PasswordHiddenCubit(),
+      create: (_) => PasswordHiddenCubit(),
       child: Scaffold(
-        body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Color(0xFF0A3D62),
-                Color(0xFF40E0D0)
-              ], // MediumTurquoise y Turquoise
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-            ),
-          ),
+        body: CustomBackground(
           child: SafeArea(
             child: BlocListener<LoginBloc, LoginState>(
               listener: (context, state) {
                 if (state is LoginSuccess) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Welcome: ${state.user.username}')),
+                    SnackBar(
+                      content: Text('Welcome: ${state.user.username}'),
+                    ),
                   );
 
-                  Navigator.pushReplacement(
+                  Navigator.pushReplacementNamed(
                     context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomePage(),
-                    ),
+                    '/home',
+                    arguments: state.user.id,
                   );
                 } else if (state is LoginError) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(state.message)),
+                    SnackBar(content: Text('Error: ${state.message}')),
                   );
                 }
               },
@@ -72,139 +58,144 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                     const SizedBox(height: 32),
-                    TextField(
-                      controller: _usernameController,
-                      decoration: const InputDecoration(
-                        prefixIcon: Icon(Icons.person, color: Colors.white),
-                        enabledBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white, width: 1.5),
-                        ),
-                        focusedBorder: UnderlineInputBorder(
-                          borderSide:
-                              BorderSide(color: Colors.white, width: 2.0),
-                        ),
-                        labelText: 'Username',
-                        labelStyle: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                      style: const TextStyle(color: Colors.white),
-                    ),
+                    _buildUsernameField(),
                     const SizedBox(height: 16.0),
-                    BlocBuilder<PasswordHiddenCubit, bool>(
-                      builder: (context, isPasswordHidden) {
-                        return TextField(
-                          obscureText: isPasswordHidden,
-                          controller: _passwordController,
-                          decoration: InputDecoration(
-                            prefixIcon:
-                                const Icon(Icons.lock, color: Colors.white),
-                            enabledBorder: const UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 1.5),
-                            ),
-                            focusedBorder: const UnderlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.white, width: 2.0),
-                            ),
-                            labelText: 'Password',
-                            labelStyle: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold),
-                            suffixIcon: IconButton(
-                              onPressed: () => context
-                                  .read<PasswordHiddenCubit>()
-                                  .togglePasswordVisibility(),
-                              icon: Icon(
-                                isPasswordHidden
-                                    ? Icons.visibility_off
-                                    : Icons.visibility,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          style: const TextStyle(color: Colors.white),
-                        );
-                      },
-                    ),
+                    _buildPasswordField(),
                     const SizedBox(height: 16.0),
-                    SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color.fromARGB(
-                              255, 9, 50, 75), // Color del botón
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 16.0),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12.0),
-                          ),
-                        ),
-                        onPressed: () async {
-                          final String username = _usernameController.text;
-                          final String password = _passwordController.text;
-                          context.read<LoginBloc>().add(
-                                LoginSubmitted(
-                                  username: username,
-                                  password: password,
-                                ),
-                              );
-                        },
-                        child: const Text(
-                          'Login',
-                          style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    ),
+                    _buildLoginButton(context),
                     const SizedBox(height: 16.0),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MultiBlocProvider(
-                              providers: [
-                                BlocProvider<SignupBloc>(
-                                  create: (_) => SignupBloc(),
-                                ),
-                                BlocProvider<ProfileBloc>(
-                                  create: (_) => ProfileBloc(),
-                                ),
-                              ],
-                              child: const SignUpFlowPage(),
-                            ),
-                          ),
-                        );
-                      },
-                      child: const Text(
-                        'New member? Create an account',
-                        style: TextStyle(
-                            color: Colors.white, fontWeight: FontWeight.bold),
-                      ),
-                    ),
+                    _buildSignUpButton(context),
                     const SizedBox(height: 8.0),
-                    Align(
-                      alignment: Alignment.centerLeft,
-                      child: TextButton(
-                        onPressed: () {
-                          // Acción para "Forgot my password"
-                        },
-                        child: const Text(
-                          'Forgot my password',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold), // Itálica
-                        ),
-                      ),
-                    ),
+                    _buildForgotPasswordButton(),
                   ],
                 ),
               ),
             ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildUsernameField() {
+    return TextField(
+      controller: _usernameController,
+      decoration: const InputDecoration(
+        prefixIcon: Icon(Icons.person, color: Colors.white),
+        enabledBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white, width: 1.5),
+        ),
+        focusedBorder: UnderlineInputBorder(
+          borderSide: BorderSide(color: Colors.white, width: 2.0),
+        ),
+        labelText: 'Username',
+        labelStyle: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+      style: const TextStyle(color: Colors.white),
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return BlocBuilder<PasswordHiddenCubit, bool>(
+      builder: (context, isPasswordHidden) {
+        return TextField(
+          obscureText: isPasswordHidden,
+          controller: _passwordController,
+          decoration: InputDecoration(
+            prefixIcon: const Icon(Icons.lock, color: Colors.white),
+            enabledBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 1.5),
+            ),
+            focusedBorder: const UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white, width: 2.0),
+            ),
+            labelText: 'Password',
+            labelStyle: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+            ),
+            suffixIcon: IconButton(
+              onPressed: () => context
+                  .read<PasswordHiddenCubit>()
+                  .togglePasswordVisibility(),
+              icon: Icon(
+                isPasswordHidden ? Icons.visibility_off : Icons.visibility,
+                color: Colors.white,
+              ),
+            ),
+          ),
+          style: const TextStyle(color: Colors.white),
+        );
+      },
+    );
+  }
+
+  Widget _buildLoginButton(BuildContext context) {
+    return SizedBox(
+      width: double.infinity,
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFF09324B), // Botón con tema
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: 16.0),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12.0),
+          ),
+        ),
+        onPressed: () {
+          final String username = _usernameController.text;
+          final String password = _passwordController.text;
+
+          context.read<LoginBloc>().add(
+                LoginSubmitted(
+                  username: username,
+                  password: password,
+                ),
+              );
+        },
+        child: const Text(
+          'Login',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 20,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSignUpButton(BuildContext context) {
+    return TextButton(
+      onPressed: () {
+        Navigator.pushNamed(context, '/signup');
+      },
+      child: const Text(
+        'New member? Create an account',
+        style: TextStyle(
+          color: Colors.white,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForgotPasswordButton() {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: TextButton(
+        onPressed: () {
+          // Acción para "Forgot my password"
+        },
+        child: const Text(
+          'Forgot my password',
+          style: TextStyle(
+            fontSize: 16,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

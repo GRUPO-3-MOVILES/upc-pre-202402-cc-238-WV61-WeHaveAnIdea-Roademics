@@ -12,8 +12,9 @@ class AuthRepository {
         await AuthService().login(username: username, password: password);
 
     if (result is Success) {
+      developer.log("AuthRepository: Token received: ${result.data!.token}");
       TokenStorage.saveToken(result.data!.token);
-      developer.log("AuthRepository: Token saved: ${result.data!.token}");
+      developer.log("AuthRepository: Token saved: ${TokenStorage.getToken()}");
       return Success(result.data!.toUser());
     } else {
       return Error(result.message!);

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:roademics/data/profile/remote/profile_request.dart';
 import 'package:roademics/data/registration/remote/regis_request.dart';
+import 'package:roademics/presentation/ai_interaction/bloc/sendprompt_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_bloc.dart';
 import 'package:roademics/presentation/authentication/bloc/login_event.dart';
 import 'package:roademics/presentation/authentication/bloc/login_state.dart';
@@ -11,6 +12,8 @@ import 'package:roademics/presentation/profile/bloc/profile_state.dart';
 import 'package:roademics/presentation/registration/bloc/signup_bloc.dart';
 import 'package:roademics/presentation/registration/bloc/signup_event.dart';
 import 'package:roademics/presentation/registration/bloc/signup_state.dart';
+import 'package:roademics/presentation/roadmaps/bloc/get_bloc/get_roadmaps_bloc.dart';
+import 'package:roademics/presentation/roadmaps/bloc/post_bloc/create_roadmap_bloc.dart';
 import 'package:roademics/shared/presentation/pages/home_page.dart';
 import 'dart:developer' as developer;
 
@@ -170,7 +173,20 @@ class SignUpFlowPageState extends State<SignUpFlowPage> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => const HomePage(),
+                    builder: (context) => MultiBlocProvider(
+                      providers: [
+                        BlocProvider<GetRoadmapsBloc>(
+                          create: (_) => GetRoadmapsBloc(),
+                        ),
+                        BlocProvider<SendPromptBloc>(
+                          create: (_) => SendPromptBloc(),
+                        ),
+                        BlocProvider<CreateRoadmapBloc>(
+                          create: (_) => CreateRoadmapBloc(),
+                        ),
+                      ],
+                      child: HomePage(userId: loginState.user.id),
+                    ),
                   ),
                 );
               } else if (loginState is LoginError) {
