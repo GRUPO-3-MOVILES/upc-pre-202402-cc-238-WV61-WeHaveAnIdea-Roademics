@@ -25,6 +25,7 @@ flutter:
   assets:
     - assets/welcome_image.jpg
     - assets/welcome_logo.png
+    - assets/Roademics_logo.png
   fonts:
     - family: Raleway
       fonts:
