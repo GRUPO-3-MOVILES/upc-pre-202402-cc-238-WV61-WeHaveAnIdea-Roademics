@@ -10,6 +10,10 @@ dependencies:
   flutter:
     sdk: flutter
   http: ^1.2.2
+  infinite_scroll_pagination: ^4.0.0
+  flutter_bloc: ^8.1.6
+  logger: ^2.0.2+1
+  flutter_secure_storage: ^9.2.2
 
 dev_dependencies:
   flutter_test:
@@ -18,3 +22,13 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/welcome_image.jpg
+    - assets/welcome_logo.png
+  fonts:
+    - family: Raleway
+      fonts:
+        - asset: assets/fonts/Raleway-Italic-VariableFont_wght.ttf
+        - asset: assets/fonts/Raleway-VariableFont_wght.ttf
+
+        
