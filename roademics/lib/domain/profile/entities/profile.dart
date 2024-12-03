@@ -66,4 +66,4 @@ class Email {
   final String address;
 
   const Email({required this.address});
-}
+} 
